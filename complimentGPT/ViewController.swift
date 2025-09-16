@@ -69,7 +69,7 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
             
         case 3:
             let cell = tableView.dequeueReusableCell(withIdentifier: CustomCell.identifier, for: indexPath) as! CustomCell
-            cell.headerLabel.text = "Upload a photo"
+            cell.headerLabel.text = "Upload Photo"
             cell.subtitleLabel.text = "AI will create compliments from your photo"
             //cell.backgroundColor = .clear
             
@@ -84,9 +84,21 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
         default:
             return UITableViewCell()
         }
-        
+    }
     
-        
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        switch indexPath.section {
+        case 0:
+            print("SHOW PIRCHASE")
+            
+        case 2:
+            navigationController?.pushViewController(DescribeSomeoneVC(), animated: true)
+            
+        default:
+            break
+        }
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

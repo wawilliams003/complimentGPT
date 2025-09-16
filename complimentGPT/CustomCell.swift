@@ -33,7 +33,7 @@ class CustomCell: UITableViewCell {
     
     let imageContainerView: UIView = {
         let view = UIView()
-        view.backgroundColor = .white//.white.withAlphaComponent(0.5)
+        view.backgroundColor = .white.withAlphaComponent(0.3)
        // view.layer.cornerRadius = 8
         return view
     }()
@@ -61,6 +61,7 @@ class CustomCell: UITableViewCell {
     let cellImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(systemName: "photo")
+        imageView.tintColor = .white
         return imageView
     }()
     
