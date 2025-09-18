@@ -1,0 +1,285 @@
+//
+//  PhotoComplimentVC.swift
+//  complimentGPT
+//
+//  Created by Wayne Williams on 9/17/25.
+//
+
+import UIKit
+import SnapKit
+
+class PhotoComplimentVC: UIViewController {
+
+    //MARK: - Properties
+    
+    let scrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        scrollView.alwaysBounceVertical = true
+        scrollView.keyboardDismissMode = .interactive
+        scrollView.backgroundColor =  ColorTheme.primary
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        return scrollView
+    }()
+    
+    let contentView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .clear
+        return view
+    }()
+    
+     var headerLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Upload photo"
+        label.font = UIFont.systemFont(ofSize: 17, weight: .semibold)
+        label.textColor = .white
+         label.textAlignment = .center
+        return label
+    }()
+    
+    let imageView: UIImageView = {
+        let imageView = UIImageView(image: UIImage(systemName: "photo")!)
+        imageView.contentMode = .scaleAspectFit
+        imageView.clipsToBounds = true
+        return imageView
+    }()
+    
+    
+    let iconImageView: UIImageView = {
+        let imageView = UIImageView(image: UIImage(systemName: "camera.fill")!)
+        imageView.contentMode = .scaleAspectFit
+        imageView.tintColor = .white
+        return imageView
+    }()
+    
+    lazy var iconContentView: UIView = {
+        let view = UIView()
+        //view.backgroundColor = .darkGray
+        view.backgroundColor = .lightGray.withAlphaComponent(0.8)//.gray.withAlphaComponent(0.25)
+        view.clipsToBounds = true
+        view.layer.cornerRadius = 30
+        view.layer.borderColor = UIColor.white.withAlphaComponent(0.6).cgColor
+        view.layer.borderWidth = 1.5
+        view.addSubview(iconImageView)
+        iconImageView.snp.makeConstraints { make in
+            //make.leading.trailing.top.equalToSuperview().inset(16)
+            //make.height.equalTo(20)
+            make.centerX.equalToSuperview()
+            make.centerY.equalToSuperview()
+            make.height.width.equalTo(40)
+        }
+        return view
+    }()
+    
+    
+    lazy var imageContentView: UIView = {
+        let view = UIView()
+        //view.backgroundColor = .darkGray
+        view.backgroundColor = .gray.withAlphaComponent(0.25)
+        view.clipsToBounds = true
+        view.layer.cornerRadius = 8
+        view.layer.borderColor = UIColor.white.withAlphaComponent(0.2).cgColor
+        view.layer.borderWidth = 1.5
+        view.addSubview(headerLabel)
+        view.addSubview(imageView)
+        headerLabel.snp.makeConstraints { make in
+            make.leading.trailing.top.equalToSuperview().inset(10)
+            make.height.equalTo(20)
+        }
+        imageView.snp.makeConstraints { make in
+            make.top.equalTo(headerLabel.snp.bottom).offset(8)
+            make.left.right.bottom.equalToSuperview().inset(0)
+           // make.edges.equalToSuperview().inset(16)
+        }
+        return view
+    }()
+    
+    lazy var generateButton: UIButton = {
+        let button = UIButton(type: .system)
+        var config = UIButton.Configuration.filled()
+        let imageConfiguration = UIImage.SymbolConfiguration(pointSize: 20, weight: .semibold)
+        let image = UIImage(systemName: "wand.and.stars.inverse", withConfiguration: imageConfiguration)//UIImage(named: "aibot")
+        config.image = image
+        config.baseBackgroundColor = .systemBlue
+        config.baseForegroundColor = .white
+        config.cornerStyle = .capsule
+        var attributedTitle = AttributedString("Generate")
+        attributedTitle.font = .systemFont(ofSize: 22, weight: .semibold)
+        attributedTitle.foregroundColor = .white
+        attributedTitle.underlineStyle = .single
+        config.attributedTitle = attributedTitle
+        config.imagePadding = 8
+        config.imagePlacement = .leading
+        button.configuration = config
+        button.addTarget(self, action: #selector(handleGenerate), for: .touchUpInside)
+        return button
+    }()
+    
+    lazy var generateContentView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .gray.withAlphaComponent(0.2)
+        view.clipsToBounds = true
+        view.layer.cornerRadius = 8
+        view.layer.borderColor = UIColor.white.withAlphaComponent(0.2).cgColor
+        view.layer.borderWidth = 1
+        view.addSubview(generateButton)
+        generateButton.snp.makeConstraints { (make) in
+            make.edges.equalToSuperview().inset(16)
+        }
+        
+        return view
+    }()
+    
+    lazy var infoContentView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .gray.withAlphaComponent(0.2)
+        view.clipsToBounds = true
+        view.layer.cornerRadius = 8
+        view.layer.borderColor = UIColor.white.withAlphaComponent(0.2).cgColor
+        view.layer.borderWidth = 1
+        view.addSubview(freeComplimentsLabel)
+        view.addSubview(upgradeButtonContentView)
+        freeComplimentsLabel.snp.makeConstraints { (make) in
+            make.edges.equalToSuperview().inset(16)
+        }
+        upgradeButtonContentView.snp.makeConstraints { (make) in
+            make.trailing.equalToSuperview().inset(16)
+            make.centerY.equalToSuperview()
+            make.width.equalTo(120)
+            make.height.equalTo(32)
+        }
+        return view
+    }()
+    
+    let freeComplimentsLabel: UILabel = {
+        let label = UILabel()
+        label.numberOfLines = 0
+        label.textAlignment = .left
+        var attributedText = NSMutableAttributedString(string: "Free compliments: \n")
+        attributedText.addAttributes([.font: UIFont.systemFont(ofSize: 13, weight: .regular)], range: NSRange(location: 0, length: attributedText.string.count))
+        attributedText.append(NSAttributedString(string: "\(3)", attributes: [.font: UIFont.systemFont(ofSize: 17, weight: .bold)]))
+        label.textColor = .white
+        label.attributedText = attributedText
+        return label
+    }()
+    
+    lazy var upgradeButton: UIButton = {
+        let button = UIButton(type: .system)
+        var config = UIButton.Configuration.filled()
+        let imageConfiguration = UIImage.SymbolConfiguration(pointSize: 10, weight: .semibold)
+        let image = UIImage(systemName: "wand.and.stars.inverse", withConfiguration: imageConfiguration)//UIImage(named: "aibot")
+        config.image = image
+        config.baseBackgroundColor = .clear
+        config.baseForegroundColor = .systemYellow
+        //config.cornerStyle = .capsule
+        var attributedTitle = AttributedString("Upgrade")
+        attributedTitle.font = .systemFont(ofSize: 15, weight: .semibold)
+        attributedTitle.foregroundColor = .white
+        attributedTitle.underlineStyle = .single
+        config.attributedTitle = attributedTitle
+        config.imagePadding = 5
+        config.imagePlacement = .leading
+        button.configuration = config
+        button.addTarget(self, action: #selector(handleGenerate), for: .touchUpInside)
+        return button
+    }()
+    
+    lazy var upgradeButtonContentView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .systemYellow.withAlphaComponent(0.15)//ColorTheme.primary
+        view.clipsToBounds = true
+        view.layer.cornerRadius = 15
+        view.layer.borderColor = UIColor.systemYellow.withAlphaComponent(0.4).cgColor
+        view.layer.borderWidth = 1
+        view.addSubview(upgradeButton)
+        upgradeButton.snp.makeConstraints { (make) in
+            make.leading.trailing.equalToSuperview().inset(5)
+            make.height.equalTo(44)
+            //make.width.equalToSuperview().inset(10)
+            make.centerY.equalToSuperview()
+        }
+        return view
+    }()
+    
+    let complimentContentView: UIView = {
+        let view = UIView()
+        //view.backgroundColor = .darkGray
+        view.backgroundColor = .gray.withAlphaComponent(0.25)
+        view.clipsToBounds = true
+        view.layer.cornerRadius = 8
+        view.layer.borderColor = UIColor.white.withAlphaComponent(0.2).cgColor
+        view.layer.borderWidth = 1.5
+        return view
+    }()
+    
+   
+    
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        setupViews()
+        // Do any additional setup after loading the view.
+    }
+    
+    
+    
+    //MARK: - Function Handlers
+    
+    @objc func handleGenerate() {
+        
+    }
+    
+    func setupViews() {
+        view.addSubview(scrollView)
+        scrollView.addSubview(contentView)
+        contentView.addSubview(imageContentView)
+        imageContentView.addSubview(iconContentView)
+        contentView.addSubview(generateContentView)
+        contentView.addSubview(infoContentView)
+        
+        scrollView.snp.makeConstraints { (make) in
+            make.edges.equalToSuperview()
+            
+        }
+        
+        contentView.snp.makeConstraints { (make) in
+            make.edges.equalToSuperview()
+            make.width.equalToSuperview()
+            make.bottom.equalTo(view.layoutMargins.bottom).offset(50)
+        }
+        
+        imageContentView.snp.makeConstraints { (make) in
+            make.leading.trailing.top.equalToSuperview().inset(16)
+            make.height.equalTo(300)
+        }
+        
+        iconContentView.snp.makeConstraints { (make) in
+            make.centerX.equalToSuperview()
+            make.centerY.equalToSuperview()
+            make.height.width.equalTo(60)
+        }
+        
+        generateContentView.snp.makeConstraints { (make) in
+            make.top.equalTo(imageContentView.snp.bottom).offset(16)
+            make.left.right.equalToSuperview().inset(16)
+            make.height.equalTo(80)
+        }
+        
+        infoContentView.snp.makeConstraints { (make) in
+            make.top.equalTo(generateContentView.snp.bottom).offset(16)
+            make.left.right.equalToSuperview().inset(16)
+            make.height.equalTo(80)
+        }
+    }
+
+    /*
+    // MARK: - Navigation
+
+    // In a storyboard-based application, you will often want to do a little preparation before navigation
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        // Get the new view controller using segue.destination.
+        // Pass the selected object to the new view controller.
+    }
+    */
+
+}

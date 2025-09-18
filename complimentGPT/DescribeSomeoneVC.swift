@@ -45,7 +45,7 @@ class DescribeSomeoneVC: UIViewController, UITextViewDelegate {
     
     let mainContentView: UIView = {
         let view = UIView()
-        view.backgroundColor = .systemRed
+        view.backgroundColor = .clear
         return view
     }()
     
@@ -202,6 +202,113 @@ class DescribeSomeoneVC: UIViewController, UITextViewDelegate {
         return view
     }()
     
+    lazy var generateButton: UIButton = {
+        let button = UIButton(type: .system)
+        var config = UIButton.Configuration.filled()
+        let imageConfiguration = UIImage.SymbolConfiguration(pointSize: 20, weight: .semibold)
+        let image = UIImage(systemName: "wand.and.stars.inverse", withConfiguration: imageConfiguration)//UIImage(named: "aibot")
+        config.image = image
+        config.baseBackgroundColor = .systemBlue
+        config.baseForegroundColor = .white
+        config.cornerStyle = .capsule
+        var attributedTitle = AttributedString("Generate")
+        attributedTitle.font = .systemFont(ofSize: 22, weight: .semibold)
+        attributedTitle.foregroundColor = .white
+        attributedTitle.underlineStyle = .single
+        config.attributedTitle = attributedTitle
+        config.imagePadding = 8
+        config.imagePlacement = .leading
+        button.configuration = config
+        button.addTarget(self, action: #selector(handleGenerate), for: .touchUpInside)
+        return button
+    }()
+    
+    lazy var generateContentView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .gray.withAlphaComponent(0.2)
+        view.clipsToBounds = true
+        view.layer.cornerRadius = 8
+        view.layer.borderColor = UIColor.white.withAlphaComponent(0.2).cgColor
+        view.layer.borderWidth = 1
+        view.addSubview(generateButton)
+        generateButton.snp.makeConstraints { (make) in
+            make.edges.equalToSuperview().inset(16)
+        }
+        
+        return view
+    }()
+    
+    lazy var infoContentView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .gray.withAlphaComponent(0.2)
+        view.clipsToBounds = true
+        view.layer.cornerRadius = 8
+        view.layer.borderColor = UIColor.white.withAlphaComponent(0.2).cgColor
+        view.layer.borderWidth = 1
+        view.addSubview(freeComplimentsLabel)
+        view.addSubview(upgradeButtonContentView)
+        freeComplimentsLabel.snp.makeConstraints { (make) in
+            make.edges.equalToSuperview().inset(16)
+        }
+        upgradeButtonContentView.snp.makeConstraints { (make) in
+            make.trailing.equalToSuperview().inset(16)
+            make.centerY.equalToSuperview()
+            make.width.equalTo(120)
+            make.height.equalTo(32)
+        }
+        return view
+    }()
+    
+    let freeComplimentsLabel: UILabel = {
+        let label = UILabel()
+        label.numberOfLines = 0
+        label.textAlignment = .left
+        var attributedText = NSMutableAttributedString(string: "Free compliments: \n")
+        attributedText.addAttributes([.font: UIFont.systemFont(ofSize: 13, weight: .regular)], range: NSRange(location: 0, length: attributedText.string.count))
+        attributedText.append(NSAttributedString(string: "\(3)", attributes: [.font: UIFont.systemFont(ofSize: 17, weight: .bold)]))
+        label.textColor = .white
+        label.attributedText = attributedText
+        return label
+    }()
+    
+    lazy var upgradeButton: UIButton = {
+        let button = UIButton(type: .system)
+        var config = UIButton.Configuration.filled()
+        let imageConfiguration = UIImage.SymbolConfiguration(pointSize: 10, weight: .semibold)
+        let image = UIImage(systemName: "wand.and.stars.inverse", withConfiguration: imageConfiguration)//UIImage(named: "aibot")
+        config.image = image
+        config.baseBackgroundColor = .clear
+        config.baseForegroundColor = .systemYellow
+        //config.cornerStyle = .capsule
+        var attributedTitle = AttributedString("Upgrade")
+        attributedTitle.font = .systemFont(ofSize: 15, weight: .semibold)
+        attributedTitle.foregroundColor = .white
+        attributedTitle.underlineStyle = .single
+        config.attributedTitle = attributedTitle
+        config.imagePadding = 5
+        config.imagePlacement = .leading
+        button.configuration = config
+        button.addTarget(self, action: #selector(handleGenerate), for: .touchUpInside)
+        return button
+    }()
+    
+    lazy var upgradeButtonContentView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .systemYellow.withAlphaComponent(0.15)//ColorTheme.primary
+        view.clipsToBounds = true
+        view.layer.cornerRadius = 15
+        view.layer.borderColor = UIColor.systemYellow.withAlphaComponent(0.4).cgColor
+        view.layer.borderWidth = 1
+        view.addSubview(upgradeButton)
+        upgradeButton.snp.makeConstraints { (make) in
+            make.leading.trailing.equalToSuperview().inset(5)
+            make.height.equalTo(44)
+            //make.width.equalToSuperview().inset(10)
+            make.centerY.equalToSuperview()
+        }
+        return view
+    }()
+    
     
     lazy var buttonStackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [copyContentView, shareContentView])
@@ -225,6 +332,11 @@ class DescribeSomeoneVC: UIViewController, UITextViewDelegate {
 //        return true
 //    }
     
+    //MARK: - Button Actions
+    @objc func handleGenerate() {
+        
+        
+    }
     
     @objc func handleCopy() {
         UIPasteboard.general.string = textView.text
@@ -264,7 +376,8 @@ extension DescribeSomeoneVC {
         complimentContentView.addSubview(complimentLabelCV)
         complimentLabelCV.addSubview(complimentLabel)
         complimentContentView.addSubview(buttonStackView)
-        shareContentView.addSubview(shareButton)
+        mainContentView.addSubview(generateContentView)
+        mainContentView.addSubview(infoContentView)
         
         scrollView.snp.makeConstraints { make in
             make.edges.equalTo(view.safeAreaLayoutGuide)
@@ -272,7 +385,8 @@ extension DescribeSomeoneVC {
         
         mainContentView.snp.makeConstraints { make in
             make.edges.equalToSuperview()                // top/left/bottom/right to scrollView
-            make.width.equalTo(scrollView.frameLayoutGuide) // important for vertical scroll
+            make.width.equalTo(scrollView.frameLayoutGuide)
+            make.bottom.equalTo(infoContentView.snp.bottom).offset(30)// important for vertical scroll
         }
         
         contentView.snp.makeConstraints { make in
@@ -324,13 +438,29 @@ extension DescribeSomeoneVC {
             make.edges.equalToSuperview().inset(10)
         }
         
-        buttonStackView.snp.makeConstraints { make in
-            make.top.equalTo(complimentLabelCV.snp.bottom).offset(10)
-            //make.centerX.equalToSuperview()
-            make.trailing.equalToSuperview().inset(16)
-            make.width.equalTo(80)
-            make.height.equalTo(50)
+        shareContentView.snp.makeConstraints { make in
+            make.height.width.equalTo(50)
             
         }
+        
+        buttonStackView.snp.makeConstraints { make in
+            make.bottom.equalToSuperview().inset(16)
+            make.trailing.equalToSuperview().inset(16)
+            make.width.equalTo(80)
+            make.height.equalTo(40)
+        }
+        
+        generateContentView.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview().inset(16)
+            make.top.equalTo(complimentContentView.snp.bottom).offset(16)
+            make.height.equalTo(80)
+        }
+        
+        infoContentView.snp.makeConstraints { make in
+            make.top.equalTo(generateContentView.snp.bottom).offset(16)
+            make.leading.trailing.equalToSuperview().inset(16)
+            make.height.equalTo(80)
+        }
+        
     }
 }

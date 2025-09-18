@@ -63,14 +63,14 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
             
         case 2:
             let cell = tableView.dequeueReusableCell(withIdentifier: CustomCell.identifier, for: indexPath) as! CustomCell
-            cell.headerLabel.text = "Decribe Someone"
+            cell.headerLabel.text = "Describe Someone"
             cell.subtitleLabel.text = "Enter info AI will create compliments"
             return cell
             
         case 3:
             let cell = tableView.dequeueReusableCell(withIdentifier: CustomCell.identifier, for: indexPath) as! CustomCell
-            cell.headerLabel.text = "Upload Photo"
-            cell.subtitleLabel.text = "AI will create compliments from your photo"
+            cell.headerLabel.text = "History"
+            cell.subtitleLabel.text = "Previous Compliments"
             //cell.backgroundColor = .clear
             
             return cell
@@ -92,6 +92,9 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
         switch indexPath.section {
         case 0:
             print("SHOW PIRCHASE")
+            
+        case 1:
+            navigationController?.pushViewController(PhotoComplimentVC(), animated: true)
             
         case 2:
             navigationController?.pushViewController(DescribeSomeoneVC(), animated: true)
