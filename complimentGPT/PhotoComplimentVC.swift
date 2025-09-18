@@ -211,7 +211,117 @@ class PhotoComplimentVC: UIViewController {
         return view
     }()
     
+    let aiCompliment: UILabel = {
+        let label = UILabel()
+        label.text = "AI Compliment"
+        label.font = .systemFont(ofSize: 17, weight: .medium)
+        label.textAlignment = .left
+        label.textColor = .white
+        return label
+    }()
+    
+    lazy var aiImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(named: "aibot")
+        imageView.contentMode = .scaleAspectFit
+        imageView.tintColor = .white
+        imageView.snp.makeConstraints { (make) in
+            make.width.height.equalTo(20)
+        }
+        return imageView
+    }()
+    
+    lazy var aiComplimentStackview: UIStackView = {
+        let stackview = UIStackView(arrangedSubviews: [aiImageView, aiCompliment])
+        stackview.axis = .horizontal
+        stackview.distribution = .fillProportionally
+        stackview.alignment = .leading
+        stackview.spacing = 5
+        //stackview.backgroundColor = .yellow
+        return stackview
+    }()
+    
+    
+    let complimentLabel: UILabel = {
+        let label = UILabel()
+        label.text = "You are becoming a very good software developer, keep up the great work!,\n You are becoming a very good software developer, keep up the great work!. I will never stop buidling something amazing for you."
+        
+        label.font = .systemFont(ofSize: 17, weight: .medium)
+        label.textAlignment = .left
+        label.textColor = .white
+        label.numberOfLines = 0
+        return label
+    }()
+    
+    let complimentLabelCV: UIView = {
+        let view = UIView()
+        view.backgroundColor = .white.withAlphaComponent(0.08)
+        view.clipsToBounds = true
+        view.layer.cornerRadius = 8
+        view.layer.borderColor = UIColor.white.withAlphaComponent(0.2).cgColor
+        view.layer.borderWidth = 1
+        return view
+    }()
+    
+    lazy var copyButton: UIButton = {
+        let button = UIButton(type: .system)
+        let image = UIImage(systemName: "doc.on.doc.fill")
+        button.setImage(image, for: .normal)
+        button.tintColor = .white
+        //button.setTitle("Copy", for: .normal)
+        //button.setTitleColor(.white, for: .normal)
+        //button.titleLabel?.font = .systemFont(ofSize: 14, weight: .medium)
+        button.addTarget(self, action: #selector(handleCopy), for: .touchUpInside)
+        return button
+    }()
+    
+    lazy var shareButton: UIButton = {
+        let button = UIButton(type: .system)
+        let image = UIImage(systemName: "square.and.arrow.up.fill")
+        button.setImage(image, for: .normal)
+        button.tintColor = .white
+        //button.setTitle("Copy", for: .normal)
+        //button.setTitleColor(.white, for: .normal)
+        //button.titleLabel?.font = .systemFont(ofSize: 14, weight: .medium)
+        button.addTarget(self, action: #selector(handleCopy), for: .touchUpInside)
+        return button
+    }()
+    
+    lazy var copyContentView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .white.withAlphaComponent(0.08)
+        view.clipsToBounds = true
+        view.layer.cornerRadius = 8
+        view.layer.borderColor = UIColor.white.withAlphaComponent(0.2).cgColor
+        view.layer.borderWidth = 1
+        view.addSubview(copyButton)
+        copyButton.snp.makeConstraints { (make) in
+            make.edges.equalToSuperview().inset(8)
+        }
+        return view
+    }()
+    
+    lazy var shareContentView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .white.withAlphaComponent(0.08)
+        view.clipsToBounds = true
+        view.layer.cornerRadius = 8
+        view.layer.borderColor = UIColor.white.withAlphaComponent(0.2).cgColor
+        view.layer.borderWidth = 1
+        view.addSubview(shareButton)
+        shareButton.snp.makeConstraints { (make) in
+            make.edges.equalToSuperview().inset(8)
+        }
+        return view
+    }()
    
+    lazy var buttonStackView: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [copyContentView, shareContentView])
+        stackView.axis = .horizontal
+        stackView.distribution = .fillEqually
+        stackView.spacing = 8
+        return stackView
+    }()
     
     
     override func viewDidLoad() {
@@ -225,6 +335,11 @@ class PhotoComplimentVC: UIViewController {
     
     //MARK: - Function Handlers
     
+    @objc func handleCopy() {
+        
+        
+    }
+    
     @objc func handleGenerate() {
         
     }
@@ -236,6 +351,25 @@ class PhotoComplimentVC: UIViewController {
         imageContentView.addSubview(iconContentView)
         contentView.addSubview(generateContentView)
         contentView.addSubview(infoContentView)
+        contentView.addSubview(aiComplimentStackview)
+        contentView.addSubview(complimentContentView)
+        complimentContentView.addSubview(complimentLabelCV)
+        complimentLabelCV.addSubview(complimentLabel)
+        complimentContentView.addSubview(shareContentView)
+        complimentContentView.addSubview(copyContentView)
+       // shareContentView.addSubview(shareButton)
+       // copyContentView.addSubview(copyButton)
+        generateContentView.addSubview(generateButton)
+        //contentView.addSubview(complimentLabel)
+        //contentView.addSubview(shareContentView)
+        //contentView.addSubview(copyButton)
+        //contentView.addSubview(shareButton)
+       // contentView.addSubview(copyContentView)
+        
+       // contentView.addSubview(aiComplimentLabel)
+        complimentContentView.addSubview(buttonStackView)
+        //contentView.addSubview(generateButton)
+        
         
         scrollView.snp.makeConstraints { (make) in
             make.edges.equalToSuperview()
@@ -245,7 +379,7 @@ class PhotoComplimentVC: UIViewController {
         contentView.snp.makeConstraints { (make) in
             make.edges.equalToSuperview()
             make.width.equalToSuperview()
-            make.bottom.equalTo(view.layoutMargins.bottom).offset(50)
+            make.bottom.equalTo(infoContentView.snp.bottomMargin).offset(50)
         }
         
         imageContentView.snp.makeConstraints { (make) in
@@ -260,7 +394,7 @@ class PhotoComplimentVC: UIViewController {
         }
         
         generateContentView.snp.makeConstraints { (make) in
-            make.top.equalTo(imageContentView.snp.bottom).offset(16)
+            make.top.equalTo(complimentContentView.snp.bottom).offset(16)
             make.left.right.equalToSuperview().inset(16)
             make.height.equalTo(80)
         }
@@ -269,6 +403,38 @@ class PhotoComplimentVC: UIViewController {
             make.top.equalTo(generateContentView.snp.bottom).offset(16)
             make.left.right.equalToSuperview().inset(16)
             make.height.equalTo(80)
+        }
+        
+        aiComplimentStackview.snp.makeConstraints { (make) in
+            make.top.equalTo(imageContentView.snp.bottom).offset(16)
+            make.left.right.equalToSuperview().inset(16)
+            make.height.equalTo(25)
+        }
+        
+        complimentContentView.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview().inset(16)
+            make.top.equalTo(aiComplimentStackview.snp.bottom).offset(10)
+            make.height.equalTo(240)
+        }
+        
+        complimentLabelCV.snp.makeConstraints { make in
+            make.leading.trailing.top.equalToSuperview().inset(16)
+            make.height.greaterThanOrEqualTo(100)        }
+        
+        complimentLabel.snp.makeConstraints { make in
+            make.edges.equalToSuperview().inset(10)
+        }
+        
+        shareContentView.snp.makeConstraints { make in
+            make.height.width.equalTo(50)
+            
+        }
+        
+        buttonStackView.snp.makeConstraints { make in
+            make.bottom.equalToSuperview().inset(16)
+            make.trailing.equalToSuperview().inset(16)
+            make.width.equalTo(80)
+            make.height.equalTo(40)
         }
     }
 

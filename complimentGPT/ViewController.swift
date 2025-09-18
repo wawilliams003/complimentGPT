@@ -99,6 +99,9 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
         case 2:
             navigationController?.pushViewController(DescribeSomeoneVC(), animated: true)
             
+        case 3:
+            navigationController?.pushViewController(HistoryVC(), animated: true)
+            
         default:
             break
         }
