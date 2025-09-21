@@ -36,20 +36,25 @@ class PhotoComplimentVC: UIViewController {
         return label
     }()
     
-    let imageView: UIImageView = {
+    lazy var imageView: UIImageView = {
         let imageView = UIImageView(image: UIImage(systemName: "photo")!)
         imageView.contentMode = .scaleAspectFit
         imageView.clipsToBounds = true
+        imageView.isUserInteractionEnabled = true
+        imageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleAddPhoto)))
         return imageView
     }()
     
     
-    let iconImageView: UIImageView = {
+    lazy var iconImageView: UIImageView = {
         let imageView = UIImageView(image: UIImage(systemName: "camera.fill")!)
         imageView.contentMode = .scaleAspectFit
         imageView.tintColor = .white
+        imageView.isUserInteractionEnabled = true
+        imageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleAddPhoto)))
         return imageView
     }()
+    
     
     lazy var iconContentView: UIView = {
         let view = UIView()
@@ -185,10 +190,10 @@ class PhotoComplimentVC: UIViewController {
     
     lazy var upgradeButtonContentView: UIView = {
         let view = UIView()
-        view.backgroundColor = .systemYellow.withAlphaComponent(0.15)//ColorTheme.primary
+        view.backgroundColor = .systemYellow.withAlphaComponent(0.1)//ColorTheme.primary
         view.clipsToBounds = true
         view.layer.cornerRadius = 15
-        view.layer.borderColor = UIColor.systemYellow.withAlphaComponent(0.4).cgColor
+        view.layer.borderColor = UIColor.systemYellow.withAlphaComponent(0.3).cgColor
         view.layer.borderWidth = 1
         view.addSubview(upgradeButton)
         upgradeButton.snp.makeConstraints { (make) in
@@ -244,9 +249,8 @@ class PhotoComplimentVC: UIViewController {
     
     let complimentLabel: UILabel = {
         let label = UILabel()
-        label.text = "You are becoming a very good software developer, keep up the great work!,\n You are becoming a very good software developer, keep up the great work!. I will never stop buidling something amazing for you."
-        
-        label.font = .systemFont(ofSize: 17, weight: .medium)
+        label.text = "You are becoming a very good software developer, keep up the great work!,\n You are becoming a very good software developer, keep up the great work!. I will never stop buidling something amazing for you. You are becoming a very good software developer, keep up the great work!,\n You are becoming a very good software developer, keep up the great work!. I will never stop buidling something amazing for you.   You are becoming a very good software developer, keep up the great work!,\n You are becoming a very good software developer, keep up the great work!. I will never stop buidling something amazing for you."
+        label.font = .systemFont(ofSize: 20, weight: .regular)
         label.textAlignment = .left
         label.textColor = .white
         label.numberOfLines = 0
@@ -326,14 +330,72 @@ class PhotoComplimentVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        navigationItem.titleView = .titleViewLabel(text: "ComplimentGPT",
+                                                   view: view)
         setupViews()
+        navButtons()
         // Do any additional setup after loading the view.
     }
     
     
+    //MARK: - Photo Helper
+    @objc func handleAddPhoto() {
+        
+        presentPhotoActionSheet()
+        
+        
+    }
+    
+    func presentPhotoActionSheet() {
+        
+        let actionSheet = UIAlertController(title: "Select Option", message: "", preferredStyle: .actionSheet)
+        
+        actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        actionSheet.addAction(UIAlertAction(title: "Take Photo", style: .default, handler: { [weak self] _ in
+            self?.presentCamera()
+        }))
+        
+        actionSheet.addAction(UIAlertAction(title: "Choose Photo", style: .default, handler: { [weak self] _ in
+            self?.presentPhotoPicker()
+        }))
+        
+        present(actionSheet, animated: true)
+        
+    }
+    
+    func presentCamera() {
+        let imagePicker = UIImagePickerController()
+        imagePicker.delegate = self
+        imagePicker.sourceType = .camera
+        imagePicker.allowsEditing = true
+        present(imagePicker, animated: true)
+    }
+    
+    func presentPhotoPicker() {
+        let imagePicker = UIImagePickerController()
+        imagePicker.delegate = self
+        imagePicker.sourceType = .photoLibrary
+        imagePicker.allowsEditing = true
+        present(imagePicker, animated: true)
+        
+    }
+    
+
+    
     
     //MARK: - Function Handlers
+    
+    func navButtons() {
+        let image = UIImage(systemName: "star.fill")
+        let rightBtn = UIBarButtonItem(image: image, style: .plain, target: self, action: #selector(rightNavButton))
+        rightBtn.tintColor = UIColor.white
+        navigationItem.rightBarButtonItem = rightBtn
+    }
+  
+    
+    @objc func rightNavButton() {
+        
+    }
     
     @objc func handleCopy() {
         
@@ -414,12 +476,14 @@ class PhotoComplimentVC: UIViewController {
         complimentContentView.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview().inset(16)
             make.top.equalTo(aiComplimentStackview.snp.bottom).offset(10)
-            make.height.equalTo(240)
+            make.height.greaterThanOrEqualTo(200)
         }
         
         complimentLabelCV.snp.makeConstraints { make in
             make.leading.trailing.top.equalToSuperview().inset(16)
-            make.height.greaterThanOrEqualTo(100)        }
+            //make.height.greaterThanOrEqualTo(100)
+            make.bottom.equalTo(buttonStackView.snp.top).offset(-16)
+        }
         
         complimentLabel.snp.makeConstraints { make in
             make.edges.equalToSuperview().inset(10)
@@ -448,4 +512,20 @@ class PhotoComplimentVC: UIViewController {
     }
     */
 
+}
+
+extension PhotoComplimentVC: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        picker.dismiss(animated: true)
+    }
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        
+        guard let selectedImage_ = info[UIImagePickerController.InfoKey.editedImage] as? UIImage else {return}
+        //self.selectedImage = slectedImage_
+        self.imageView.image = selectedImage_
+        iconContentView.isHidden = true
+        picker.dismiss(animated: true)
+    }
 }

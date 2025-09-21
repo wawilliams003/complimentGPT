@@ -51,3 +51,25 @@ struct ColorTheme {
     
     static let primary: UIColor = UIColor(hex: "DB5F5E", alpha: 1)!
 }
+
+extension UIView {
+    
+    static func titleViewLabel(text: String, view: UIView) -> UILabel {
+        let label = UILabel()
+        label.textAlignment = .center
+        label.frame = CGRect(x: 0, y: view.frame.size.width / 2, width: 150, height: 50)
+            let string = text
+            let attributedString = NSMutableAttributedString(string: string)
+            attributedString.addAttributes([
+                .font: UIFont(name: "HelveticaNeue-CondensedBold", size: 25) ?? UIFont.systemFont(ofSize: 25),
+                .kern: 2.0,
+                .foregroundColor: UIColor.white
+            ], range: NSRange(location: 0, length: string.count))
+           // return attributedString
+        label.attributedText = attributedString
+        return label
+    }
+    
+    
+}
+

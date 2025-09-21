@@ -22,7 +22,8 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.backgroundColor = .secondarySystemBackground
+        self.view.backgroundColor = ColorTheme.primary
+        tableView.backgroundColor = ColorTheme.primary
         //self.view.backgroundColor = .red
         setupViews()
         
@@ -31,13 +32,47 @@ class ViewController: UIViewController {
 
     
     func setupViews() {
+        navigationItem.titleView = .titleViewLabel(text: "ComplimentGPT",
+                                                   view: self.view)
+        let appearance = UINavigationBarAppearance()
+            appearance.configureWithOpaqueBackground() // or .configureWithTransparentBackground()
+        appearance.backgroundColor = ColorTheme.primary
+        navigationController?.navigationBar.standardAppearance = appearance
         view.addSubview(tableView)
         tableView.snp.makeConstraints { make in
             make.edges.equalTo(view.safeAreaLayoutGuide)
         }
         tableView.delegate = self
         tableView.dataSource = self
+        navButtons()
     }
+    
+    //MARK: - Helper Functions
+    func navButtons() {
+        let image = UIImage(systemName: "star.fill")
+        let rightBtn = UIBarButtonItem(image: image, style: .plain, target: self, action: #selector(rightNavButton))
+        rightBtn.tintColor = .white
+        navigationItem.rightBarButtonItem = rightBtn
+        
+        let image_ = UIImage(systemName: "person.fill")
+        let leftBtn = UIBarButtonItem(image: image_, style: .plain, target: self, action: #selector(leftNavButton))
+        leftBtn.tintColor = UIColor.white
+        navigationItem.leftBarButtonItem = leftBtn
+        
+        
+    }
+    
+    
+    @objc func leftNavButton() {
+        navigationController?.pushViewController(SettingsVC(), animated: true)
+    }
+
+    
+    @objc func rightNavButton() {
+        
+    }
+    
+    
 }
 
 extension ViewController: UITableViewDelegate, UITableViewDataSource {
@@ -57,22 +92,25 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
             
         case 1:
             let cell = tableView.dequeueReusableCell(withIdentifier: CustomCell.identifier, for: indexPath) as! CustomCell
-            cell.headerLabel.text = "Upload a Photo"
-            cell.subtitleLabel.text = "AI will create compliments from your photo"
+            cell.configure(title: "Upload a Photo",
+                           subtitle: "AI will create compliments from your photo",
+                           icon: "photo.fill")
+//            cell.headerLabel.text = "AI will create compliments from your photo"
+//            cell.subtitleLabel.text = "AI will create compliments from your photo"
             return cell
             
         case 2:
             let cell = tableView.dequeueReusableCell(withIdentifier: CustomCell.identifier, for: indexPath) as! CustomCell
-            cell.headerLabel.text = "Describe Someone"
-            cell.subtitleLabel.text = "Enter info AI will create compliments"
+            cell.configure(title: "Describe Someone", subtitle:
+                            "Enter info AI will create compliments",
+                           icon: "person.fill")
             return cell
             
         case 3:
             let cell = tableView.dequeueReusableCell(withIdentifier: CustomCell.identifier, for: indexPath) as! CustomCell
-            cell.headerLabel.text = "History"
-            cell.subtitleLabel.text = "Previous Compliments"
-            //cell.backgroundColor = .clear
-            
+            cell.configure(title: "History",
+                           subtitle: "Previous Compliments",
+                           icon: "arrow.counterclockwise")
             return cell
             
         case 4:

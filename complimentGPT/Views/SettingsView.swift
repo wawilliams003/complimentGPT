@@ -1,51 +1,38 @@
 //
-//  CustomCell.swift
+//  SettingsView.swift
 //  complimentGPT
 //
-//  Created by Wayne Williams on 9/15/25.
+//  Created by Wayne Williams on 9/18/25.
 //
 
 import UIKit
 import SnapKit
 
-
-class CustomCell: UITableViewCell {
-    
-    static let identifier = "CustomCell"
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        
-    }
+class SettingsView: UIView {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    var header: String = ""
-    var subtitle: String = ""
-    var icon: String = ""
-    
-    func configure(title: String, subtitle: String, icon: String) {
-        self.header = title
-        self.subtitle = subtitle
-        self.icon = icon
+    override init(frame: CGRect) {
+        super.init(frame: frame)
     }
     
-   
+    init(headerText: String, subtitleText: String, iconImageString: String) {
+        self.headerText = headerText
+        self.subtitleText = subtitleText
+        self.iconImageString = iconImageString
+        super.init(frame: .zero)
+        
+    }
     
-    
-//    let titleText: String
-//    let subtitleText: String
-//    
-//    init(titleText: String, subtitleText: String) {
-//        self.titleText = titleText
-//        self.subtitleText = subtitleText
-//        super.init()
-//    }
+    var headerText: String = ""
+    var subtitleText: String = ""
+    var iconImageString: String = ""
     
     let containerView: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor.lightGray.withAlphaComponent(0.15)
+        //view.backgroundColor = .clear//.yellow//UIColor.lightGray.withAlphaComponent(0.15)
         view.layer.cornerRadius = 8
         view.layer.borderWidth = 1.25
         view.layer.borderColor = UIColor.white.withAlphaComponent(0.2).cgColor
@@ -62,7 +49,7 @@ class CustomCell: UITableViewCell {
     
     lazy var headerLabel: UILabel = {
         let label = UILabel()
-        label.text = header
+        label.text = headerText
         label.textColor = .white
         label.font = .systemFont(ofSize: 17, weight: .medium)
         label.textAlignment = .left
@@ -72,7 +59,7 @@ class CustomCell: UITableViewCell {
     
     lazy var subtitleLabel: UILabel = {
         let label = UILabel()
-        label.text = subtitle
+        label.text = subtitleText
         label.textColor = UIColor.lightText.withAlphaComponent(1)
         label.font = .systemFont(ofSize: 13, weight: .regular)
         label.textAlignment = .left
@@ -82,7 +69,7 @@ class CustomCell: UITableViewCell {
     
     lazy var cellImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(systemName: icon)
+        imageView.image = UIImage(systemName: iconImageString)
         imageView.tintColor = .white
         return imageView
     }()
@@ -97,48 +84,57 @@ class CustomCell: UITableViewCell {
     lazy var  stackview: UIStackView = {
         let stackview = UIStackView(arrangedSubviews: [headerLabel, subtitleLabel])
         stackview.axis = .vertical
-        stackview.spacing = 4
+        stackview.spacing = 0
         return stackview
     }()
     
     
+    
     override func layoutSubviews() {
         super.layoutSubviews()
-        backgroundColor = .clear
-        self.contentView.addSubview(containerView)
-        containerView.addSubview(imageContainerView)
-        //containerView.addSubview(cellImageView)
+        backgroundColor = UIColor.lightGray.withAlphaComponent(0.15)
+        layer.cornerRadius = 8
+        layer.borderWidth = 1.25
+        layer.borderColor = UIColor.white.withAlphaComponent(0.2).cgColor
+        //layer.cornerRadius = 8
+        //backgroundColor = .red
+        //containerView.backgroundColor = .yellow
+        //addSubview(containerView)
+        addSubview(imageContainerView)
         imageContainerView.addSubview(cellImageView)
-        containerView.addSubview(stackview)
-       // containerView.addSubview(headerLabel)
-        //containerView.addSubview(subtitleLabel)
+        addSubview(stackview)
+        addSubview(arrowImageView)
         
-       
-        containerView.addSubview(arrowImageView)
-        
-        containerView.snp.makeConstraints { (make) in
-            make.edges.equalToSuperview().inset(10)
+        self.snp.makeConstraints { (make) in
+            make.top.equalToSuperview().inset(20)
+            make.leading.trailing.equalToSuperview().inset(16)
+            make.height.equalTo(70)
+            //make.bottom.edges.equalToSuperview().inset(20)
+            
+           // make.edges.equalToSuperview().inset(20)
         }
+//        containerView.snp.makeConstraints { (make) in
+//            make.leading.trailing.equalToSuperview().inset(16)
+//            make.top.equalToSuperview().offset(20)
+//            make.height.equalTo(70)
+//            //make.edges.equalToSuperview().inset(40)
+//        }
         
         imageContainerView.snp.makeConstraints { (make) in
-            make.leading.equalToSuperview().offset(20)
-           // make.leading.equalTo(containerView.snp.leading).inset(16)
-            make.top.equalToSuperview().inset(20)
-            //make.center.equalToSuperview()
-            make.width.height.equalTo(40)
-            imageContainerView.layer.cornerRadius = 20
-            imageContainerView.clipsToBounds = true
+            make.leading.top.equalToSuperview().inset(16)
+            make.height.width.equalTo(44)
+            make.centerY.equalToSuperview()
         }
-      
+        
+        
         cellImageView.snp.makeConstraints { (make) in
             make.edges.equalToSuperview().inset(5)
         }
-        
+        ///*
         stackview.snp.makeConstraints { (make) in
-            make.leading.equalTo(imageContainerView.snp.leading).inset(50)
-            make.center.equalToSuperview()
-            make.trailing.equalToSuperview().inset(16)
-            
+            make.leading.equalTo(imageContainerView.snp.trailing).offset(10)
+            make.centerY.equalToSuperview()
+            make.width.equalTo(200)
         }
         
         arrowImageView.snp.makeConstraints { (make) in
@@ -146,6 +142,8 @@ class CustomCell: UITableViewCell {
             make.trailing.equalToSuperview().inset(10)
             make.width.height.equalTo(15)
         }
-        
+         
+         //*/
     }
+    
 }

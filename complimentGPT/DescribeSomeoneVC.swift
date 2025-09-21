@@ -131,10 +131,11 @@ class DescribeSomeoneVC: UIViewController, UITextViewDelegate {
     
     let complimentLabel: UILabel = {
         let label = UILabel()
-        label.text = "You are becoming a very good software developer, keep up the great work!,\n You are becoming a very good software developer, keep up the great work!. I will never stop buidling something amazing for you."
+        label.text = "You are becoming a very good software developer, keep up the great work!,\n You are becoming a very good software developer, keep up the great work!. I will never stop buidling something amazing for you.   You are becoming a very good software developer, keep up the great work!,\n You are becoming a very good software developer, keep up the great work!. I will never stop buidling something amazing for you."
         
-        label.font = .systemFont(ofSize: 17, weight: .medium)
+        label.font = .systemFont(ofSize: 20, weight: .regular)
         label.textAlignment = .left
+        //label.contentMode = .topLeft
         label.textColor = .white
         label.numberOfLines = 0
         return label
@@ -294,10 +295,10 @@ class DescribeSomeoneVC: UIViewController, UITextViewDelegate {
     
     lazy var upgradeButtonContentView: UIView = {
         let view = UIView()
-        view.backgroundColor = .systemYellow.withAlphaComponent(0.15)//ColorTheme.primary
+        view.backgroundColor = .systemYellow.withAlphaComponent(0.1)//ColorTheme.primary
         view.clipsToBounds = true
         view.layer.cornerRadius = 15
-        view.layer.borderColor = UIColor.systemYellow.withAlphaComponent(0.4).cgColor
+        view.layer.borderColor = UIColor.systemYellow.withAlphaComponent(0.3).cgColor
         view.layer.borderWidth = 1
         view.addSubview(upgradeButton)
         upgradeButton.snp.makeConstraints { (make) in
@@ -323,6 +324,7 @@ class DescribeSomeoneVC: UIViewController, UITextViewDelegate {
         super.viewDidLoad()
         setupViews()
         textView.delegate = self
+        navButtons()
         //textView.becomeFirstResponder()
         // Do any additional setup after loading the view.
     }
@@ -346,8 +348,18 @@ class DescribeSomeoneVC: UIViewController, UITextViewDelegate {
     func textViewDidChange(_ textView: UITextView) {
         textCountLabel.text = "\(textView.text.count)/\(150)"
     }
+    
+    func navButtons() {
+        let image = UIImage(systemName: "star.fill")
+        let rightBtn = UIBarButtonItem(image: image, style: .plain, target: self, action: #selector(rightNavButton))
+        rightBtn.tintColor = UIColor.white
+        navigationItem.rightBarButtonItem = rightBtn
+    }
   
     
+    @objc func rightNavButton() {
+        
+    }
     /*
     // MARK: - Navigation
 
@@ -364,6 +376,8 @@ extension DescribeSomeoneVC {
     //MARK: - Setup
     
     func setupViews() {
+        view.backgroundColor = ColorTheme.primary
+        navigationItem.titleView = .titleViewLabel(text: "ComplimentGPT", view: view)
         view.addSubview(scrollView)
         scrollView.addSubview(mainContentView)
         mainContentView.addSubview(contentView)
@@ -427,12 +441,15 @@ extension DescribeSomeoneVC {
         complimentContentView.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview().inset(16)
             make.top.equalTo(aiComplimentStackview.snp.bottom).offset(10)
-            make.height.equalTo(240)
+            make.height.greaterThanOrEqualTo(200)
         }
         
         complimentLabelCV.snp.makeConstraints { make in
             make.leading.trailing.top.equalToSuperview().inset(16)
-            make.height.greaterThanOrEqualTo(100)        }
+            make.bottom.equalTo(buttonStackView.snp.top).offset(-16)
+            //make.bottom.equalTo(buttonStackView.snp.top).offset(10)
+            //make.height.greaterThanOrEqualTo(200)
+        }
         
         complimentLabel.snp.makeConstraints { make in
             make.edges.equalToSuperview().inset(10)

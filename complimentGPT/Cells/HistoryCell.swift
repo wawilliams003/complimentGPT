@@ -20,6 +20,19 @@ class HistoryCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
     }
     
+    var iconString = ""
+    var photoCompString = ""
+    
+    var complement: Compliment? {
+        didSet {
+            guard let complement else { return }
+            complimentLabel.text = complement.text
+            iconString = complement.type.iconName
+            complement.type == .photo ? (headerLabel.text = "Photo") : (headerLabel.text = "Text")
+            
+        }
+    }
+    
     
     let containerView: UIView = {
         let view = UIView()
@@ -31,21 +44,23 @@ class HistoryCell: UITableViewCell {
         return view
     }()
     
-    let headerIconImageView: UIImageView = {
+    lazy var headerIconImageView: UIImageView = {
+        let configuration = UIImage.SymbolConfiguration(pointSize: 17)
         let imageView = UIImageView()
-        imageView.image = UIImage(systemName: "text.bubble")
+        let image = UIImage(systemName: iconString, withConfiguration: configuration)
+        imageView.image = image//UIImage(systemName: iconString)
         imageView.tintColor = .white
         imageView.contentMode = .scaleAspectFit
 //        imageView.snp.makeConstraints { (make) in
-//            make.width.height.equalTo(24)
+//            make.width.height.equalTo(10)
 //        }
         return imageView
     }()
     
     let headerLabel: UILabel = {
         let label = UILabel()
-        label.text = "Text Compliment"
-        label.font = UIFont.systemFont(ofSize: 16, weight: .medium)
+       // label.text = "TextGPT"
+        label.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
         label.textColor = .white
         return label
     }()
@@ -54,7 +69,7 @@ class HistoryCell: UITableViewCell {
         let stackView = UIStackView(arrangedSubviews: [headerIconImageView, headerLabel])
         stackView.axis = .horizontal
         stackView.distribution = .fillProportionally
-        stackView.spacing = 5
+        stackView.spacing = 1
         stackView.alignment = .leading
         return stackView
     }()
@@ -84,7 +99,7 @@ class HistoryCell: UITableViewCell {
     
     let complimentLabel: UILabel = {
         let label = UILabel()
-        label.text = "The Compliment will show Here, I think the AI will creae something cool"
+       // label.text = ""
         label.numberOfLines = 0
         label.font = UIFont.systemFont(ofSize: 18, weight: .regular)
         label.textColor = .white
@@ -147,7 +162,7 @@ class HistoryCell: UITableViewCell {
         let stackView = UIStackView(arrangedSubviews: [copyContentView, shareContentView])
         stackView.axis = .horizontal
         stackView.distribution = .fillEqually
-        stackView.spacing = 8
+        stackView.spacing = 3
         return stackView
     }()
     
@@ -163,12 +178,14 @@ class HistoryCell: UITableViewCell {
         
         containerView.snp.makeConstraints { (make) in
             make.edges.equalToSuperview().inset(16)
+            //make.leading.trailing.top.equalToSuperview().inset(16)
+            //make.height.greaterThanOrEqualTo(250)
         }
         
         headerContainerView.snp.makeConstraints { (make) in
             make.leading.top.equalTo(containerView).inset(16)
-            make.height.equalTo(30)
-            make.width.equalTo(170)
+            make.height.equalTo(25)
+            make.width.equalTo(85)
         }
         
         timeLabel.snp.makeConstraints { (make) in
@@ -185,9 +202,10 @@ class HistoryCell: UITableViewCell {
         }
         
         complimentLabel.snp.makeConstraints { (make) in
-            make.top.equalTo(headerContainerView.snp.bottom).offset(-15)
+            make.top.equalTo(headerContainerView.snp.bottom).offset(5)
             make.leading.trailing.equalToSuperview().inset(16)
-            make.bottom.equalTo(buttonStackView.snp.top).offset(5)
+           // make.bottom.greaterThanOrEqualTo(buttonStackView.snp.top).offset(-10)
+            make.bottom.equalTo(buttonStackView.snp.top).offset(10)
         }
         
     }
