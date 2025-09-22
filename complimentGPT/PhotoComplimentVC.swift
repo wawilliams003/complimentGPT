@@ -380,6 +380,25 @@ class PhotoComplimentVC: UIViewController {
         
     }
     
+    let historyHeaderView: HistoryHeaderView = {
+        return HistoryHeaderView()
+    }()
+    
+    let historyStackView: UIStackView = {
+        var stackView = UIStackView()
+
+        //var sorted = ComplimentStorage.load().sorted(by: { $0.date > $1.date })
+        var sorted = ComplimentStorage.load().filter({$0.type == .photo})
+        sorted = Array(sorted.prefix(5))
+        sorted.forEach { (compliment) in
+            stackView.addArrangedSubview(HistoryView(compliment: compliment))
+        }
+        stackView.axis = .vertical
+        stackView.distribution = .fill
+        stackView.spacing = 10
+        return stackView
+    }()
+    
 
     
     
@@ -403,6 +422,13 @@ class PhotoComplimentVC: UIViewController {
     }
     
     @objc func handleGenerate() {
+       guard imageView.image != nil else { return }
+        let imageData = imageView.image?.jpegData(compressionQuality: 0.5)
+        let compliment = Compliment(text: " You are becoming a very good software developer, keep up the great work!,\n You are becoming a very good software developer, keep up the great work!. I will never stop buidling something amazing for you. ",
+                                    date: Date(),
+                                    image: imageData,
+                                    type: .photo)
+        ComplimentStorage.save(compliment)
         
     }
     
@@ -431,6 +457,8 @@ class PhotoComplimentVC: UIViewController {
        // contentView.addSubview(aiComplimentLabel)
         complimentContentView.addSubview(buttonStackView)
         //contentView.addSubview(generateButton)
+        contentView.addSubview(historyHeaderView)
+        contentView.addSubview(historyStackView)
         
         
         scrollView.snp.makeConstraints { (make) in
@@ -441,7 +469,8 @@ class PhotoComplimentVC: UIViewController {
         contentView.snp.makeConstraints { (make) in
             make.edges.equalToSuperview()
             make.width.equalToSuperview()
-            make.bottom.equalTo(infoContentView.snp.bottomMargin).offset(50)
+            //make.bottom.equalTo(infoContentView.snp.bottomMargin).offset(50)
+            make.bottom.greaterThanOrEqualTo(historyHeaderView.snp.bottom).offset(200)
         }
         
         imageContentView.snp.makeConstraints { (make) in
@@ -499,6 +528,19 @@ class PhotoComplimentVC: UIViewController {
             make.trailing.equalToSuperview().inset(16)
             make.width.equalTo(80)
             make.height.equalTo(40)
+        }
+        
+        historyHeaderView.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview().inset(16)
+            make.top.equalTo(infoContentView.snp.bottom).offset(20)
+            make.height.equalTo(50)
+        }
+        
+        historyStackView.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview().inset(0)
+            make.top.equalTo(historyHeaderView.snp.bottom)
+            //make.height.equalTo(70)
+            make.bottom.equalToSuperview().inset(16)
         }
     }
 

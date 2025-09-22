@@ -76,6 +76,52 @@ class UnlockFeaturesCell: UITableViewCell {
         return stackview
     }()
     
+    lazy var upgradeButton: UIButton = {
+        let button = UIButton(type: .system)
+        var config = UIButton.Configuration.filled()
+        let imageConfiguration = UIImage.SymbolConfiguration(pointSize: 20, weight: .semibold)
+        let image = UIImage(systemName: "crown.fill", withConfiguration: imageConfiguration)//UIImage(named: "aibot")
+        config.image = image
+        config.baseBackgroundColor = .clear
+        config.baseForegroundColor = .systemGreen
+        //config.cornerStyle = .capsule
+//        var attributedTitle = AttributedString("Upgrade")
+//        attributedTitle.font = .systemFont(ofSize: 12, weight: .semibold)
+//        attributedTitle.foregroundColor = .white
+//        attributedTitle.underlineStyle = .single
+//        config.attributedTitle = attributedTitle
+        config.imagePadding = 5
+        config.imagePlacement = .leading
+        button.configuration = config
+        button.addTarget(self, action: #selector(handleUgrade), for: .touchUpInside)
+        return button
+    }()
+    
+    lazy var upgradeButtonContentView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .systemGreen.withAlphaComponent(0.2)//ColorTheme.primary
+        view.clipsToBounds = true
+        view.layer.cornerRadius = 15
+        view.layer.borderColor = UIColor.systemGreen.withAlphaComponent(0.3).cgColor
+        view.layer.borderWidth = 1
+        view.addSubview(upgradeButton)
+        upgradeButton.snp.makeConstraints { (make) in
+            make.edges.equalToSuperview().inset(10)
+            //make.leading.trailing.equalToSuperview().inset(5)
+            //make.height.equalTo(44)
+            //make.centerX.equalToSuperview()
+            //make.width.equalToSuperview().inset(10)
+            //make.centerY.equalToSuperview()
+        }
+        return view
+    }()
+    
+    
+    
+    @objc func handleUgrade(){
+        
+    }
+    
     
     override func layoutSubviews() {
         super.layoutSubviews()
@@ -85,7 +131,8 @@ class UnlockFeaturesCell: UITableViewCell {
         //containerView.addSubview(cellImageView)
         imageContainerView.addSubview(cellImageView)
         containerView.addSubview(stackview)
-        containerView.addSubview(subcriptionImageView)
+        // containerView.addSubview(subcriptionImageView)
+        containerView.addSubview(upgradeButtonContentView)
         
         containerView.snp.makeConstraints { (make) in
             make.edges.equalToSuperview().inset(10)
@@ -98,7 +145,7 @@ class UnlockFeaturesCell: UITableViewCell {
             imageContainerView.layer.cornerRadius = 20
             imageContainerView.clipsToBounds = true
         }
-      
+        
         cellImageView.snp.makeConstraints { (make) in
             make.edges.equalToSuperview().inset(5)
         }
@@ -110,13 +157,21 @@ class UnlockFeaturesCell: UITableViewCell {
             
         }
         
-        subcriptionImageView.snp.makeConstraints { (make) in
+        //        subcriptionImageView.snp.makeConstraints { (make) in
+        //            make.centerY.equalToSuperview()
+        //            //make.top.equalToSuperview().offset(20)
+        //            make.trailing.equalToSuperview().inset(10)
+        //            make.height.width.equalTo(40)
+        //
+        //        }
+        
+        upgradeButtonContentView.snp.makeConstraints { (make) in
             make.centerY.equalToSuperview()
-            //make.top.equalToSuperview().offset(20)
             make.trailing.equalToSuperview().inset(10)
-            make.height.width.equalTo(40)
-            
+            make.height.equalTo(50)
+            make.width.equalTo(50)
         }
+        
         
     }
 }

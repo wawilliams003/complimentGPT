@@ -6,7 +6,8 @@
 //
 
 
-enum ComplimentType: String {
+
+enum ComplimentType: String, Codable {
     case description
     case photo
     
@@ -19,19 +20,23 @@ enum ComplimentType: String {
 }
 
 import Foundation
+import UIKit
 
-class Compliment {
+class Compliment: Codable {
+    //let uid: String = UUID().uuidString
     let text: String
-    let Date: Date
-    let image: String?
+    let date: Date
+    let image: Data?
     var type: ComplimentType // = .description
     
-    init(text: String, Date: Date, image: String? = nil, type: ComplimentType) {
+    init(text: String, date: Date, image: Data? = nil, type: ComplimentType) {
         self.text = text
-        self.Date = Date
+        self.date = date
         self.image = image
         self.type = type
     }
+    
+    
 }
 
 

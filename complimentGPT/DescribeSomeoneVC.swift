@@ -31,11 +31,13 @@ class DescribeSomeoneVC: UIViewController, UITextViewDelegate {
         return view
     }()
     
+    var complimentViewHeightConstraint = 250
     
     let complimentContentView: UIView = {
         let view = UIView()
-        //view.backgroundColor = .darkGray
-        view.backgroundColor = .gray.withAlphaComponent(0.25)
+       // view.isHidden = true
+        view.backgroundColor = .lightGray.withAlphaComponent(0.4)
+       // view.backgroundColor = .gray.withAlphaComponent(0.25)
         view.clipsToBounds = true
         view.layer.cornerRadius = 8
         view.layer.borderColor = UIColor.white.withAlphaComponent(0.2).cgColor
@@ -131,7 +133,7 @@ class DescribeSomeoneVC: UIViewController, UITextViewDelegate {
     
     let complimentLabel: UILabel = {
         let label = UILabel()
-        label.text = "You are becoming a very good software developer, keep up the great work!,\n You are becoming a very good software developer, keep up the great work!. I will never stop buidling something amazing for you.   You are becoming a very good software developer, keep up the great work!,\n You are becoming a very good software developer, keep up the great work!. I will never stop buidling something amazing for you."
+//        label.text = "You are becoming a very good software developer, keep up the great work!,\n You are becoming a very good software developer, keep up the great work!. I will never stop buidling something amazing for you.   You are becoming a very good software developer, keep up the great work!,\n You are becoming a very good software developer, keep up the great work!. I will never stop buidling something amazing for you."
         
         label.font = .systemFont(ofSize: 20, weight: .regular)
         label.textAlignment = .left
@@ -320,11 +322,47 @@ class DescribeSomeoneVC: UIViewController, UITextViewDelegate {
     }()
     
     
+    let historyHeaderView: HistoryHeaderView = {
+        return HistoryHeaderView()
+    }()
+    
+    
+    let historyStackView: UIStackView = {
+        var stackView = UIStackView()
+
+        //var sorted = ComplimentStorage.load().sorted(by: { $0.date > $1.date })
+        var sorted = ComplimentStorage.load().filter({$0.type == .description})
+        sorted = Array(sorted.prefix(5))
+        sorted.forEach { (compliment) in
+            stackView.addArrangedSubview(HistoryView(compliment: compliment))
+        }
+        stackView.axis = .vertical
+        stackView.distribution = .fillProportionally
+        stackView.spacing = 10
+        return stackView
+    }()
+    
+    let loadingView: TypingDotsView = {
+        let view = TypingDotsView()
+        
+        
+        return view
+    }()
+    
+    let placeHolderLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Compliment Lives here"
+        label.textColor = .secondaryLabel
+        label.numberOfLines = 0
+        return label
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
         textView.delegate = self
         navButtons()
+        loadingView.startAnimating()
         //textView.becomeFirstResponder()
         // Do any additional setup after loading the view.
     }
@@ -336,8 +374,16 @@ class DescribeSomeoneVC: UIViewController, UITextViewDelegate {
     
     //MARK: - Button Actions
     @objc func handleGenerate() {
-        
-        
+
+        let trimmedText = textView.text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedText.isEmpty, trimmedText != "." else {
+            print("Please add some text")
+            return
+        }
+        let compliment = Compliment(text: trimmedText,
+                                    date: Date(), type: .description)
+        ComplimentStorage.save(compliment)
+        textView.text = ""
     }
     
     @objc func handleCopy() {
@@ -346,7 +392,12 @@ class DescribeSomeoneVC: UIViewController, UITextViewDelegate {
    
 
     func textViewDidChange(_ textView: UITextView) {
-        textCountLabel.text = "\(textView.text.count)/\(150)"
+        let maxCharacters = 150
+        if textView.text.count > maxCharacters {
+            textView.text = String(textView.text.prefix(maxCharacters))
+            print("Limit reached")
+        }
+        textCountLabel.text = "\(textView.text.count)/\(maxCharacters)"
     }
     
     func navButtons() {
@@ -355,6 +406,14 @@ class DescribeSomeoneVC: UIViewController, UITextViewDelegate {
         rightBtn.tintColor = UIColor.white
         navigationItem.rightBarButtonItem = rightBtn
     }
+    
+    let recentLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Recent Compliments"
+        label.font = UIFont.systemFont(ofSize: 20, weight: .bold)
+        label.textColor = UIColor.white
+        return label
+    }()
   
     
     @objc func rightNavButton() {
@@ -389,9 +448,12 @@ extension DescribeSomeoneVC {
         mainContentView.addSubview(complimentContentView)
         complimentContentView.addSubview(complimentLabelCV)
         complimentLabelCV.addSubview(complimentLabel)
+        complimentLabelCV.addSubview(loadingView)
         complimentContentView.addSubview(buttonStackView)
         mainContentView.addSubview(generateContentView)
         mainContentView.addSubview(infoContentView)
+        mainContentView.addSubview(historyHeaderView)
+        mainContentView.addSubview(historyStackView)
         
         scrollView.snp.makeConstraints { make in
             make.edges.equalTo(view.safeAreaLayoutGuide)
@@ -400,7 +462,7 @@ extension DescribeSomeoneVC {
         mainContentView.snp.makeConstraints { make in
             make.edges.equalToSuperview()                // top/left/bottom/right to scrollView
             make.width.equalTo(scrollView.frameLayoutGuide)
-            make.bottom.equalTo(infoContentView.snp.bottom).offset(30)// important for vertical scroll
+            make.bottom.greaterThanOrEqualTo(historyHeaderView.snp.bottom).offset(400)// important for vertical scroll
         }
         
         contentView.snp.makeConstraints { make in
@@ -441,7 +503,8 @@ extension DescribeSomeoneVC {
         complimentContentView.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview().inset(16)
             make.top.equalTo(aiComplimentStackview.snp.bottom).offset(10)
-            make.height.greaterThanOrEqualTo(200)
+            make.height.greaterThanOrEqualTo(180)
+           // make.height.greaterThanOrEqualTo(complimentViewHeightConstraint)
         }
         
         complimentLabelCV.snp.makeConstraints { make in
@@ -478,6 +541,28 @@ extension DescribeSomeoneVC {
             make.leading.trailing.equalToSuperview().inset(16)
             make.height.equalTo(80)
         }
+        
+        historyHeaderView.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview().inset(16)
+            make.top.equalTo(infoContentView.snp.bottom).offset(20)
+            make.height.equalTo(50)
+        }
+        
+        historyStackView.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview().inset(0)
+            make.top.equalTo(historyHeaderView.snp.bottom)
+            //make.height.equalTo(70)
+            make.bottom.equalToSuperview().inset(16)
+        }
+        
+        
+        loadingView.snp.makeConstraints { make in
+           // make.edges.equalToSuperview().offset(30)
+            make.centerX.centerY.equalTo(complimentLabelCV.snp.center)
+        }
+//        placeHolderLabel.snp.makeConstraints { make in
+//            make.centerY.centerX.equalToSuperview()
+//        }
         
     }
 }

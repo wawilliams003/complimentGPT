@@ -40,15 +40,9 @@ class HistoryVC: UIViewController {
         setupViews()
         tableView.delegate = self
         tableView.dataSource = self
-        //tableView.rowHeight = UITableView.automaticDimension
-        //tableView.estimatedRowHeight = 180
-        // Do any additional setup after loading the view.
-        compliments.append(Compliment(text: "You are becoming a very good software developer, keep up the great work!,\n You are becoming a very good software developer, keep up the great work!. I will never stop buidling something amazing for you.", Date: Date(), type: .description))
-        
-        compliments.append(Compliment(text: "You are a great person, keep up the  good work. Youll be great at what you do in no time.", Date: Date(), type: .description))
-        
-        compliments.append(Compliment(text: "This complient os from a photo. You are becoming a very good software developer, keep up the great work!,\n You are becoming a very good software developer, keep up the great work!. I will never stop buidling something amazing for you. You are a great person, keep up the  good work. Youll be great at what you do in no time.You are a great person, keep up the  good work. Youll be great at what you do in no time", Date: Date(), type: .photo))
-        
+          compliments = ComplimentStorage.load()
+          //compliments.sort(by: { $0.date > $1.date })
+            
         tableView.reloadData()
     }
     
@@ -74,6 +68,7 @@ class HistoryVC: UIViewController {
     @objc func rightNavButton() {
         
     }
+    
 
     /*
     // MARK: - Navigation
@@ -96,6 +91,18 @@ extension HistoryVC: UITableViewDelegate, UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: HistoryCell.identifier, for: indexPath) as! HistoryCell
         cell.complement = compliments[indexPath.row]
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            // 1. Remove the compliment from the array
+            compliments.remove(at: indexPath.row)
+            // 2. Save the updated array
+            ComplimentStorage.saveAll(compliments)
+
+            // 3. Delete the row from the table view
+            tableView.deleteRows(at: [indexPath], with: .fade)
+        }
     }
     
     

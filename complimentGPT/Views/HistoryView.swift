@@ -1,4 +1,11 @@
 //
+//  HistoryView.swift
+//  complimentGPT
+//
+//  Created by Wayne Williams on 9/21/25.
+//
+
+//
 //  HistoryCell.swift
 //  complimentGPT
 //
@@ -9,36 +16,48 @@ import UIKit
 import SnapKit
 
 
-class HistoryCell: UITableViewCell {
-    static let identifier: String = "HistoryCell"
+class HistoryView: UIView {
+   // static let identifier: String = "HistoryCell"
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
+    override init(frame: CGRect) {
+        super.init(frame: frame)
     }
     
     var iconString = ""
     var photoCompString = ""
     
-    var complement: Compliment? {
-        didSet {
-            guard let complement else { return }
-            complimentLabel.text = complement.text
-            iconString = complement.type.iconName
-            complement.type == .photo ? (headerLabel.text = "Photo") : (headerLabel.text = "Text")
-            timeLabel.text = .timeAgoString(from: complement.date)
-            guard let data = complement.image, !data.isEmpty else {
-                complimentImageView.isHidden = true
-                return
-            }
-            let image = UIImage(data: data)
-            complimentImageView.image = image
+//    var complement: Compliment? {
+//        didSet {
+//            guard let complement else { return }
+//            complimentLabel.text = complement.text
+//            iconString = complement.type.iconName
+//            complement.type == .photo ? (headerLabel.text = "Photo") : (headerLabel.text = "Text")
+//            timeLabel.text = .timeAgoString(from: complement.date)
+//        }
+//    }
+    
+    fileprivate func setup(_ compliment: Compliment) {
+        self.complimentLabel.text = compliment.text
+        iconString = compliment.type.iconName
+        compliment.type == .photo ? (headerLabel.text = "Photo") : (headerLabel.text = "Text")
+        timeLabel.text = .timeAgoString(from: compliment.date)
+        guard let data = compliment.image, !data.isEmpty else {
+            complimentImageView.isHidden = true
+            return
         }
+        let image = UIImage(data: data)
+        complimentImageView.image = image
     }
     
+    init(compliment: Compliment) {
+        super.init(frame: .zero)
+        
+        self.setup(compliment)
+    }
     
     let containerView: UIView = {
         let view = UIView()
@@ -97,7 +116,7 @@ class HistoryCell: UITableViewCell {
     
     let timeLabel: UILabel = {
         let label = UILabel()
-       // label.text = "20s"
+        label.text = "20s"
         label.font = UIFont.systemFont(ofSize: 15, weight: .regular)
         label.textColor = .white
         return label
@@ -105,7 +124,7 @@ class HistoryCell: UITableViewCell {
     
     let complimentLabel: UILabel = {
         let label = UILabel()
-       // label.text = ""
+//        label.text = "This is an example of a recent history. I am only going to add 5 for now. And see how that looks This is an example of a recent history. I am only going to add 5 for now. And see how that looks"
         label.numberOfLines = 0
         label.font = UIFont.systemFont(ofSize: 18, weight: .regular)
         label.textColor = .white
@@ -222,7 +241,7 @@ class HistoryCell: UITableViewCell {
             make.top.equalTo(headerContainerView.snp.bottom).offset(5)
             make.leading.trailing.equalToSuperview().inset(16)
            // make.bottom.greaterThanOrEqualTo(buttonStackView.snp.top).offset(-10)
-            make.bottom.equalTo(buttonStackView.snp.top).offset(10)
+            make.bottom.equalTo(buttonStackView.snp.top).offset(-10)
         }
         
         complimentImageView.snp.makeConstraints { (make) in
