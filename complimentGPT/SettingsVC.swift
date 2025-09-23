@@ -75,7 +75,7 @@ extension SettingsVC: UITableViewDelegate, UITableViewDataSource {
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 5
+        return 6
     }
     
     
@@ -84,7 +84,7 @@ extension SettingsVC: UITableViewDelegate, UITableViewDataSource {
         print("INDEX SECTION: \(indexPath.section)")
         
         print("INDEX ROW: \(indexPath.row)")
-       /*
+       
         switch indexPath.section  {
         case 0:
             print("SHOW PIRCHASE")
@@ -93,7 +93,9 @@ extension SettingsVC: UITableViewDelegate, UITableViewDataSource {
             navigationController?.pushViewController(PhotoComplimentVC(), animated: true)
             
         case 2:
-            navigationController?.pushViewController(DescribeSomeoneVC(), animated: true)
+            navigationController?.pushViewController(NotificationVC(), animated: true)
+            
+           // navigationController?.pushViewController(DescribeSomeoneVC(), animated: true)
             
         case 3:
             print("3")
@@ -101,11 +103,13 @@ extension SettingsVC: UITableViewDelegate, UITableViewDataSource {
         case 4:
             print("4")
             
+        case 5:
+            print("4")
         default: break
 
 
         }
-        */
+        
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -127,24 +131,38 @@ extension SettingsVC: UITableViewDelegate, UITableViewDataSource {
             
         case 2:
             let cell = tableView.dequeueReusableCell(withIdentifier: CustomCell.identifier, for: indexPath) as! CustomCell
+            cell.configure(title: "Enable Notifications",
+                           subtitle: "Get a new Compliment every day",
+                           icon: "bell.fill")
+            return cell
+            
+        case 3:
+            let cell = tableView.dequeueReusableCell(withIdentifier: CustomCell.identifier, for: indexPath) as! CustomCell
             cell.configure(title: "Terms of Service",
                            subtitle: "View terms of servicee",
                            icon: "doc.on.doc")
             return cell
             
-        case 3:
+        case 4:
             let cell = tableView.dequeueReusableCell(withIdentifier: CustomCell.identifier, for: indexPath) as! CustomCell
             cell.configure(title: "Privacy Policy",
                            subtitle: "Review privacy policy",
                            icon: "hand.raised.fingers.spread.fill")
             return cell
             
-        case 4:
+        case 5:
             let cell = tableView.dequeueReusableCell(withIdentifier: CustomCell.identifier, for: indexPath) as! CustomCell
             cell.configure(title: "Rate",
                            subtitle: "Let us know how you like it",
                            icon: "star.fill")
             return cell
+            
+//        case 5:
+//            let cell = tableView.dequeueReusableCell(withIdentifier: CustomCell.identifier, for: indexPath) as! CustomCell
+//            cell.configure(title: "Enable Notifications",
+//                           subtitle: "Get a new Compliment every day",
+//                           icon: "bell.fill")
+//            return cell
 
             
         default:
