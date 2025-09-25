@@ -186,6 +186,8 @@ class NotificationVC: UIViewController {
     }()
     
     
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = ColorTheme.primary

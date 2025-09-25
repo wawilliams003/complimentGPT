@@ -69,7 +69,8 @@ class ViewController: UIViewController {
 
     
     @objc func rightNavButton() {
-        
+        self.present(PaymentVC(), animated: true)
+
     }
     
     

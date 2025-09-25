@@ -8,10 +8,14 @@
 
 /* Begin PBXBuildFile section */
 		B02D11A22E78FA3D00CA99A1 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = B02D11A12E78FA3D00CA99A1 /* SnapKit */; };
+		B0E723782E84A1D70054F961 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B0E723772E84A1D70054F961 /* StoreKit.framework */; };
+		B0E7237A2E84A3520054F961 /* complimentGptIAP.storekit in Resources */ = {isa = PBXBuildFile; fileRef = B0E723792E84A3520054F961 /* complimentGptIAP.storekit */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		B02D11862E78F72C00CA99A1 /* complimentGPT.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = complimentGPT.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B0E723772E84A1D70054F961 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
+		B0E723792E84A3520054F961 /* complimentGptIAP.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = complimentGptIAP.storekit; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -41,6 +45,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B02D11A22E78FA3D00CA99A1 /* SnapKit in Frameworks */,
+				B0E723782E84A1D70054F961 /* StoreKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -50,7 +55,9 @@
 		B02D117D2E78F72C00CA99A1 = {
 			isa = PBXGroup;
 			children = (
+				B0E723792E84A3520054F961 /* complimentGptIAP.storekit */,
 				B02D11882E78F72C00CA99A1 /* complimentGPT */,
+				B0E723762E84A1D70054F961 /* Frameworks */,
 				B02D11872E78F72C00CA99A1 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -61,6 +68,14 @@
 				B02D11862E78F72C00CA99A1 /* complimentGPT.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		B0E723762E84A1D70054F961 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				B0E723772E84A1D70054F961 /* StoreKit.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -131,6 +146,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B0E7237A2E84A3520054F961 /* complimentGptIAP.storekit in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
