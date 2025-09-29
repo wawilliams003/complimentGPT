@@ -7,6 +7,7 @@
 
 import UIKit
 import SnapKit
+import SafariServices
 
 class SettingsVC: UIViewController {
 
@@ -30,6 +31,21 @@ class SettingsVC: UIViewController {
         // Do any additional setup after loading the view.
     }
     
+    func openPrivacyPolicy() {
+           if let url = URL(string: "https://wawilliams003.github.io/complimentsAI-pages/privacy.html") {
+               let safariVC = SFSafariViewController(url: url)
+               present(safariVC, animated: true, completion: nil)
+           }
+       }
+    
+    func openTermsOfService() {
+         if let url = URL(string:
+                            "https://wawilliams003.github.io/complimentsAI-pages/terms.html") {
+             let safariVC = SFSafariViewController(url: url)
+             present(safariVC, animated: true, completion: nil)
+         }
+     }
+ 
     
     //MARK: - Helper Functions
     func navButtons() {
@@ -98,10 +114,10 @@ extension SettingsVC: UITableViewDelegate, UITableViewDataSource {
            // navigationController?.pushViewController(DescribeSomeoneVC(), animated: true)
             
         case 3:
-            print("3")
+            openTermsOfService()
             
         case 4:
-            print("4")
+            openPrivacyPolicy()
             
         case 5:
             print("4")

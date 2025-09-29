@@ -41,7 +41,7 @@ class NotificationVC: UIViewController {
     
     var pickerHour: Int = 0
     var pickerMinute: Int = 0
-    
+    var currentTime: String = ""
     
     
     lazy var timePicker: UIDatePicker = {
@@ -52,13 +52,6 @@ class NotificationVC: UIViewController {
         picker.preferredDatePickerStyle = .inline
         picker.addTarget(self, action: #selector(pickerValueChanged), for: .valueChanged)
         picker.locale = Locale(identifier: "en_US_POSIX")
-        //picker.textColor = .black
-        //picker.backgroundColor = .white.withAlphaComponent(0.8)
-        //picker.layer.cornerRadius = 8
-       // picker.clipsToBounds = true
-        
-        //picker.setValue(UIColor.systemBlue, forKey: "textColor")
-        //picker.backgroundColor = .systemGroupedBackground
         return picker
     }()
     
@@ -70,10 +63,16 @@ class NotificationVC: UIViewController {
         view.layer.borderColor = UIColor.white.withAlphaComponent(0.3).cgColor
         view.layer.borderWidth = 1.5
         view.addSubview(timePicker)
+        view.addSubview(currentTimeLabel)
         timePicker.snp.makeConstraints { (make) in
-            
+            make.trailing.equalToSuperview().offset(-10)
             make.center.equalToSuperview()
             make.width.equalTo(100)
+        }
+        
+        currentTimeLabel.snp.makeConstraints { (make) in
+            make.top.leading.equalToSuperview().inset(10)
+            //make.height.equalTo(30)
         }
         
         return view
@@ -92,7 +91,7 @@ class NotificationVC: UIViewController {
         label.numberOfLines = 0
         label.font = UIFont.systemFont(ofSize: 20, weight: .regular)
         label.textColor = .white
-        label.contentMode = .left
+        label.textAlignment = .center
         return label
     }()
    
@@ -185,7 +184,19 @@ class NotificationVC: UIViewController {
         return button
     }()
     
-    
+    lazy var currentTimeLabel: UILabel = {
+        let label = UILabel()
+        label.numberOfLines = 0
+        
+        let attributedString = NSMutableAttributedString(string: "Delivery time: \n")
+        attributedString.setAttributes([.font: UIFont.systemFont(ofSize: 15, weight: .medium)], range: NSRange(location: 0, length: attributedString.length))
+        let time = "\(UserDefaults.standard.string(forKey: "notificationTime") ?? "Not Set")"
+        let setAtText = NSAttributedString(string: time, attributes: [.font: UIFont.systemFont(ofSize: 25, weight: .semibold)])
+        attributedString.append(setAtText)
+        label.attributedText = attributedString
+        label.textColor = .white
+        return label
+    }()
     
     
     override func viewDidLoad() {
@@ -193,9 +204,11 @@ class NotificationVC: UIViewController {
         view.backgroundColor = ColorTheme.primary
         navigationItem.titleView = .titleViewLabel(text: "Notification Settings",
                                                    view: self.view)
-        
         setupView()
         previewLabel.text = getRandomCompliment()
+        //currentTime = "\(UserDefaults.standard.string(forKey: "notificationTime") ?? "Not Set")"
+
+        //currentTimeLabel.text = "Current Time: \(UserDefaults.standard.string(forKey: "notificationTime") ?? "Not Set")"
         // Do any additional setup after loading the view.
     }
     
@@ -204,16 +217,24 @@ class NotificationVC: UIViewController {
     @objc func pickerValueChanged(_ sender: UIDatePicker) {
         let components = Calendar.current.dateComponents([.hour, .minute], from: sender.date)
         //components.calendar.date.
+        //components.
         if let componentHour = components.hour, let componentMinute = components.minute {
             self.pickerHour = componentHour
             self.pickerMinute = componentMinute
-            print("Hour: \(componentHour), Minute: \(componentMinute)")
+            //print("Hour: \(componentHour), Minute: \(componentMinute)")
         }
+        let formatter = DateFormatter()
+        formatter.dateFormat = "h:mma"
+        formatter.timeStyle = .short
+        let time = formatter.string(from: timePicker.date)//"\(pickerHour):\(pickerMinute)"
+        UserDefaults.standard.set(time, forKey: "notificationTime")
+        
     }
     
     
     @objc func enableNotificationTapped() {
         requestNotificationPermission(at: pickerHour, minute: pickerMinute)
+        
     }
     
     func requestNotificationPermission(at hour: Int, minute: Int) {

@@ -19,14 +19,14 @@ class PaymentVC: UIViewController {
     lazy var purchaseBtn: UIButton = {
         let button = UIButton(type: .system)
         var config = UIButton.Configuration.filled()
-        let imageConfiguration = UIImage.SymbolConfiguration(pointSize: 20, weight: .medium)
-        let image = UIImage(systemName: "wand.and.stars.inverse", withConfiguration: imageConfiguration)//UIImage(named: "aibot")
+        let imageConfiguration = UIImage.SymbolConfiguration(pointSize: 15, weight: .medium)
+        let image = UIImage(systemName: "arrowshape.right.fill", withConfiguration: imageConfiguration)//UIImage(named: "aibot")
         config.image = image
         config.baseBackgroundColor = .link
-        config.baseForegroundColor = .systemYellow
+        config.baseForegroundColor = .white
         config.cornerStyle = .capsule
-        var attributedTitle = AttributedString("Continue for free!")
-        attributedTitle.font = .systemFont(ofSize: 30, weight: .semibold)
+        var attributedTitle = AttributedString("Continue for FREE")
+        attributedTitle.font = .systemFont(ofSize: 30, weight: .medium)
         attributedTitle.foregroundColor = .white
         attributedTitle.underlineStyle = .single
         config.attributedTitle = attributedTitle
@@ -34,6 +34,57 @@ class PaymentVC: UIViewController {
         config.imagePlacement = .trailing
         button.configuration = config
         button.addTarget(self, action: #selector(handlePurchase), for: .touchUpInside)
+        return button
+    }()
+    
+    let iconImageView: UIImageView = {
+        let imageView = UIImageView(image: UIImage(named: "aibot"))
+        imageView.contentMode = .scaleAspectFit
+        return imageView
+    }()
+    
+    let headerLabel: UILabel = {
+        let label = UILabel()
+        //label.text = "Unlock all features"
+        label.textColor = .black
+        label.textAlignment = .center
+        label.numberOfLines = 0
+        
+        let attributedString = NSMutableAttributedString(string: "Unlock all features \n")
+        attributedString.setAttributes([.font: UIFont.systemFont(ofSize: 40, weight: .bold)], range: NSRange(location: 0, length: attributedString.length))
+        
+        let free = NSAttributedString(string: "App is FREE to try \n", attributes: [.font: UIFont.systemFont(ofSize: 35, weight: .semibold)])
+        attributedString.append(free)
+        
+        
+        let unlimited = NSAttributedString(string: "🤖 Powerful AI Models \n", attributes: [.font: UIFont.systemFont(ofSize: 35, weight: .semibold)])
+        attributedString.append(unlimited)
+        
+        let nitifications = NSAttributedString(string: "🔔 DAILY COMPLIMENTS \n", attributes: [.font: UIFont.systemFont(ofSize: 28, weight: .semibold)])
+        attributedString.append(nitifications)
+        
+        let aiModels = NSAttributedString(string: "🥰 Unlimited Compliments", attributes: [.font: UIFont.systemFont(ofSize: 30, weight: .semibold)])
+        attributedString.append(aiModels)
+        label.attributedText = attributedString
+        //label.font = .systemFont(ofSize: 30, weight: .semibold)
+        return label
+    }()
+    
+    let cancelInfoLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Then $4.99/week | Cancel anytime"
+        label.textColor = .darkGray//.withAlphaComponent(0.6)
+        label.textAlignment = .center
+        label.font = .systemFont(ofSize: 20, weight: .semibold)
+        return label
+    }()
+    
+    lazy var dismissBtn: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("Dismiss", for: .normal)
+        button.setTitleColor(.lightGray, for: .normal)
+        button.addTarget(self, action: #selector(handleDismiss), for: .touchUpInside)
+        button.titleLabel?.font = .systemFont(ofSize: 20, weight: .semibold)
         return button
     }()
     
@@ -52,6 +103,12 @@ class PaymentVC: UIViewController {
     func setupViews() {
         view.addSubview(containerView)
         containerView.addSubview(purchaseBtn)
+        containerView.addSubview(iconImageView)
+        containerView.addSubview(headerLabel)
+        containerView.addSubview(cancelInfoLabel)
+        containerView.addSubview(dismissBtn)
+        
+
         
         containerView.snp.makeConstraints { (make) in
             make.edges.equalTo(view.safeAreaLayoutGuide)
@@ -59,8 +116,32 @@ class PaymentVC: UIViewController {
         }
         
         purchaseBtn.snp.makeConstraints { (make) in
-            make.center.equalTo(containerView)
+            make.top.equalTo(headerLabel.snp.bottom).offset(20)
             make.leading.trailing.equalTo(containerView).inset(40)
+            make.height.equalTo(70)
+        }
+        
+        iconImageView.snp.makeConstraints { (make) in
+            make.top.equalTo(containerView).offset(100)
+            make.centerX.equalTo(purchaseBtn)
+            make.height.width.equalTo(100)
+        }
+        
+        headerLabel.snp.makeConstraints { (make) in
+            make.top.equalTo(iconImageView.snp.bottom).offset(10)
+            make.leading.trailing.equalToSuperview().inset(20)
+            make.height.equalTo(260)
+        }
+        
+        cancelInfoLabel.snp.makeConstraints { (make) in
+            make.top.equalTo(purchaseBtn.snp.bottom).offset(10)
+            make.leading.trailing.equalToSuperview().inset(20)
+            make.height.equalTo(50)
+        }
+        
+        dismissBtn.snp.makeConstraints { (make) in
+            make.top.equalTo(cancelInfoLabel.snp.bottom).offset(10)
+            make.centerX.equalToSuperview()
         }
     
     }
@@ -70,6 +151,11 @@ class PaymentVC: UIViewController {
         Task {
           await  StorekitManager.shared.makePayment()
         }
+    }
+    
+    @objc func handleDismiss() {
+        dismiss(animated: true)
+        
     }
     /*
     // MARK: - Navigation

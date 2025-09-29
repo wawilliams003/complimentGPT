@@ -76,9 +76,6 @@ class HistoryView: UIView {
         imageView.image = image//UIImage(systemName: iconString)
         imageView.tintColor = .white
         imageView.contentMode = .scaleAspectFit
-//        imageView.snp.makeConstraints { (make) in
-//            make.width.height.equalTo(10)
-//        }
         return imageView
     }()
     
@@ -191,15 +188,53 @@ class HistoryView: UIView {
         return stackView
     }()
     
-    var complimentImageView: UIImageView = {
+    lazy var complimentImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
         imageView.layer.cornerRadius = 20
         imageView.layer.borderColor = UIColor.white.cgColor//.withAlphaComponent(0.5).cgColor
         imageView.layer.borderWidth = 1.5
+        imageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(otherUserImageTapped)))
+        imageView.isUserInteractionEnabled = true
         return imageView
     }()
+    
+    //MARK: - Helper Functions
+    
+    @objc func otherUserImageTapped() {
+        
+        guard let startingFrame = complimentImageView.superview?.convert(complimentImageView.frame, to: nil),
+              let image = complimentImageView.image else { return }
+
+        let zoomImageView = UIImageView(image: image)
+        zoomImageView.frame = startingFrame
+        zoomImageView.contentMode = .scaleAspectFit
+        zoomImageView.backgroundColor = .black
+        zoomImageView.isUserInteractionEnabled = true
+
+        if let window = self.window {
+            window.addSubview(zoomImageView)
+
+            UIView.animate(withDuration: 0.3, animations: {
+                zoomImageView.frame = window.frame
+                zoomImageView.backgroundColor = .black
+            })
+
+            let tap = UITapGestureRecognizer(target: self, action: #selector(dismissZoomedImage(_:)))
+            zoomImageView.addGestureRecognizer(tap)
+        }
+    }
+    
+    @objc func dismissZoomedImage(_ sender: UITapGestureRecognizer) {
+        guard let zoomImageView = sender.view as? UIImageView else { return }
+
+        UIView.animate(withDuration: 0.3, animations: {
+            zoomImageView.alpha = 0
+        }) { _ in
+            zoomImageView.removeFromSuperview()
+        }
+    }
     
     
     override func layoutSubviews() {
