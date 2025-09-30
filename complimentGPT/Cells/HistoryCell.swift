@@ -8,6 +8,10 @@
 import UIKit
 import SnapKit
 
+protocol HistoryCellDelagate: AnyObject {
+    func copyPaste(for cell: HistoryCell)
+    func share(for cell: HistoryCell)
+}
 
 class HistoryCell: UITableViewCell {
     static let identifier: String = "HistoryCell"
@@ -18,7 +22,11 @@ class HistoryCell: UITableViewCell {
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        selectionStyle = .none
     }
+    
+    weak var delegate: HistoryCellDelagate?
+
     
     var iconString = ""
     var photoCompString = ""
@@ -132,7 +140,7 @@ class HistoryCell: UITableViewCell {
         //button.setTitle("Copy", for: .normal)
         //button.setTitleColor(.white, for: .normal)
         //button.titleLabel?.font = .systemFont(ofSize: 14, weight: .medium)
-        button.addTarget(self, action: #selector(handleCopy), for: .touchUpInside)
+        button.addTarget(self, action: #selector(handleShare), for: .touchUpInside)
         return button
     }()
     
@@ -276,6 +284,11 @@ class HistoryCell: UITableViewCell {
     //MARK: -
     
     @objc func handleCopy() {
-        
+        delegate?.copyPaste(for: self)
+    }
+    
+    
+    @objc func handleShare() {
+        delegate?.share(for: self)
     }
 }

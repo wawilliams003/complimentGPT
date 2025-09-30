@@ -344,8 +344,6 @@ class DescribeSomeoneVC: UIViewController, UITextViewDelegate {
     
     let loadingView: TypingDotsView = {
         let view = TypingDotsView()
-        
-        
         return view
     }()
     
@@ -388,6 +386,7 @@ class DescribeSomeoneVC: UIViewController, UITextViewDelegate {
     
     @objc func handleCopy() {
         UIPasteboard.general.string = textView.text
+        
     }
    
 

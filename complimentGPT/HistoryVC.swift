@@ -8,8 +8,8 @@
 import UIKit
 import SnapKit
 
-class HistoryVC: UIViewController {
-    
+class HistoryVC: UIViewController, HistoryCellDelagate {
+
     var compliments: [Compliment] = []
     
     let tableView: UITableView = {
@@ -69,6 +69,22 @@ class HistoryVC: UIViewController {
         
     }
     
+    func copyPaste(for cell: HistoryCell) {
+        guard let indexPath = tableView.indexPath(for: cell) else {return}
+        let textToCopy = compliments[indexPath.row].text
+        UIPasteboard.general.string = textToCopy
+        print("Copied: \(textToCopy)")
+        self.view.showToast(message: "Copied")
+    }
+    
+    func share(for cell: HistoryCell) {
+        guard let indexPath = tableView.indexPath(for: cell) else {return}
+        let textToShare = compliments[indexPath.row].text
+        let activityVC = UIActivityViewController(activityItems: [textToShare], applicationActivities: nil)
+        //if let vc = self.parentViewController() {
+            self.present(activityVC, animated: true, completion: nil)
+        //}
+    }
 
     /*
     // MARK: - Navigation
@@ -90,6 +106,7 @@ extension HistoryVC: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: HistoryCell.identifier, for: indexPath) as! HistoryCell
         cell.complement = compliments[indexPath.row]
+        cell.delegate = self
         return cell
     }
     
@@ -121,4 +138,13 @@ extension HistoryVC: UITableViewDelegate, UITableViewDataSource {
         return boundingBox.height + 150 // Add padding for other content
     }
      
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+       // let indexPath = tableView.
+        let selectedCompliment = compliments[indexPath.row]
+        let textToCopy = selectedCompliment.text
+        UIPasteboard.general.string = textToCopy
+        print("Copied: \(textToCopy)")
+    }
+    
 }

@@ -128,6 +128,7 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        
         switch indexPath.section {
         case 0:
             print("SHOW PIRCHASE")
@@ -154,5 +155,11 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
         }
         
         return 100
+    }
+    
+    func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
+        if let cell = tableView.cellForRow(at: indexPath) {
+            cell.contentView.backgroundColor = .clear
+        }
     }
 }

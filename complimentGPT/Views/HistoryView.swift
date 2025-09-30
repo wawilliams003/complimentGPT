@@ -15,6 +15,10 @@
 import UIKit
 import SnapKit
 
+protocol HistoryViewDelegate: AnyObject {
+    func copyToClipboard(_ text: String)
+}
+
 
 class HistoryView: UIView {
    // static let identifier: String = "HistoryCell"
@@ -27,9 +31,11 @@ class HistoryView: UIView {
         super.init(frame: frame)
     }
     
+    weak var delegate: HistoryViewDelegate?
+    
     var iconString = ""
     var photoCompString = ""
-    
+    var textToCopy: String = ""
 //    var complement: Compliment? {
 //        didSet {
 //            guard let complement else { return }
@@ -40,7 +46,7 @@ class HistoryView: UIView {
 //        }
 //    }
     
-    fileprivate func setup(_ compliment: Compliment) {
+     func setup(_ compliment: Compliment) {
         self.complimentLabel.text = compliment.text
         iconString = compliment.type.iconName
         compliment.type == .photo ? (headerLabel.text = "Photo") : (headerLabel.text = "Text")
@@ -51,6 +57,8 @@ class HistoryView: UIView {
         }
         let image = UIImage(data: data)
         complimentImageView.image = image
+        
+        
     }
     
     init(compliment: Compliment) {
@@ -148,7 +156,7 @@ class HistoryView: UIView {
         //button.setTitle("Copy", for: .normal)
         //button.setTitleColor(.white, for: .normal)
         //button.titleLabel?.font = .systemFont(ofSize: 14, weight: .medium)
-        button.addTarget(self, action: #selector(handleCopy), for: .touchUpInside)
+        button.addTarget(self, action: #selector(handleShare), for: .touchUpInside)
         return button
     }()
     
@@ -291,6 +299,34 @@ class HistoryView: UIView {
     //MARK: -
     
     @objc func handleCopy() {
+        //let textToCopy = complimentLabel.text ?? ""
+        print("Copied: \(complimentLabel.text ?? "Nothing to copy")")
+        UIPasteboard.general.string = textToCopy
         
+        if let vc = self.parentViewController() {
+            vc.view.showToast(message: "Copied")
+        }
+    }
+    
+    
+    @objc func handleShare() {
+        let activityVC = UIActivityViewController(activityItems: [complimentLabel.text ?? "Nothing to share"], applicationActivities: nil)
+        if let vc = self.parentViewController() {
+            vc.present(activityVC, animated: true, completion: nil)
+        }
+        
+    }
+}
+
+extension UIView {
+    func parentViewController() -> UIViewController? {
+        var responder: UIResponder? = self
+        while let r = responder {
+            if let vc = r as? UIViewController {
+                return vc
+            }
+            responder = r.next
+        }
+        return nil
     }
 }

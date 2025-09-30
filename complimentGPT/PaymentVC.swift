@@ -50,14 +50,14 @@ class PaymentVC: UIViewController {
         label.textAlignment = .center
         label.numberOfLines = 0
         
-        let attributedString = NSMutableAttributedString(string: "Unlock all features \n")
-        attributedString.setAttributes([.font: UIFont.systemFont(ofSize: 40, weight: .bold)], range: NSRange(location: 0, length: attributedString.length))
+        let attributedString = NSMutableAttributedString(string: "Unlock all Features \n")
+        attributedString.setAttributes([.font: UIFont.systemFont(ofSize: 35, weight: .bold)], range: NSRange(location: 0, length: attributedString.length))
         
-        let free = NSAttributedString(string: "App is FREE to try \n", attributes: [.font: UIFont.systemFont(ofSize: 35, weight: .semibold)])
+        let free = NSAttributedString(string: "App is FREE to try \n", attributes: [.font: UIFont.systemFont(ofSize: 32, weight: .semibold)])
         attributedString.append(free)
         
         
-        let unlimited = NSAttributedString(string: "🤖 Powerful AI Models \n", attributes: [.font: UIFont.systemFont(ofSize: 35, weight: .semibold)])
+        let unlimited = NSAttributedString(string: "🤖 Powerful AI Models \n", attributes: [.font: UIFont.systemFont(ofSize: 32, weight: .semibold)])
         attributedString.append(unlimited)
         
         let nitifications = NSAttributedString(string: "🔔 DAILY COMPLIMENTS \n", attributes: [.font: UIFont.systemFont(ofSize: 28, weight: .semibold)])

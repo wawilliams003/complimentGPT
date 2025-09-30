@@ -9,18 +9,20 @@ import UIKit
 import SnapKit
 
 
+
+
 class CustomCell: UITableViewCell {
     
     static let identifier = "CustomCell"
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        
+        selectionStyle = .none
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+        
     var header: String = ""
     var subtitle: String = ""
     var icon: String = ""
