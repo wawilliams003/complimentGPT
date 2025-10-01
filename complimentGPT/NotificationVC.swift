@@ -81,7 +81,7 @@ class NotificationVC: UIViewController {
     let previewHeaderLabel: UILabel = {
         let label = UILabel()
         label.text = "Preview"
-        label.font = UIFont.systemFont(ofSize: 20, weight: .semibold)
+        label.font = UIFont.systemFont(ofSize: 22, weight: .semibold)
         label.textColor = .white
         return label
     }()
@@ -89,22 +89,23 @@ class NotificationVC: UIViewController {
     let previewLabel: UILabel = {
         let label = UILabel()
         label.numberOfLines = 0
-        label.font = UIFont.systemFont(ofSize: 20, weight: .regular)
+        label.font = UIFont.systemFont(ofSize: 30, weight: .medium)
         label.textColor = .white
         label.textAlignment = .center
+        label.minimumScaleFactor = 0.5
         return label
     }()
    
     lazy var previewLabelContainerView: UIView = {
         let view = UIView()
-        view.backgroundColor = .white.withAlphaComponent(0.15)
+        view.backgroundColor = .white.withAlphaComponent(0.12)
         view.clipsToBounds = true
         view.layer.cornerRadius = 8
         view.layer.borderColor = UIColor.white.withAlphaComponent(0.1).cgColor
         view.layer.borderWidth = 1.5
         view.addSubview(previewLabel)
         previewLabel.snp.makeConstraints { (make) in
-            make.edges.equalToSuperview().inset(10)
+            make.edges.equalToSuperview().inset(5)
         }
 
         return view
@@ -205,11 +206,11 @@ class NotificationVC: UIViewController {
         navigationItem.titleView = .titleViewLabel(text: "Notification Settings",
                                                    view: self.view)
         setupView()
-        previewLabel.text = getRandomCompliment()
-        //currentTime = "\(UserDefaults.standard.string(forKey: "notificationTime") ?? "Not Set")"
-
-        //currentTimeLabel.text = "Current Time: \(UserDefaults.standard.string(forKey: "notificationTime") ?? "Not Set")"
-        // Do any additional setup after loading the view.
+        //previewLabel.text = ComplimentLoader.load().first!.text
+        let allCompliments = ComplimentLoader.load()
+        DailyComplimentProvider.shared.configure(with: allCompliments)
+        let preview = DailyComplimentProvider.shared.todayCompliment()?.text
+        previewLabel.text = preview
     }
     
     //MARK: - Helper Functions
@@ -255,8 +256,9 @@ class NotificationVC: UIViewController {
     
     func scheduleDailyCompliment(at hour: Int, minute: Int) {
         let content = UNMutableNotificationContent()
-        content.title = "Your Daily Compliment 💖"
-        content.body = getRandomCompliment()
+        let text = DailyComplimentProvider.shared.todayCompliment()?.text ?? "Wishing you a great day!"
+        content.title = "💖 Daily Compliment 💖"
+        content.body = text
         content.sound = .default
         
         var dateComponents = DateComponents()
@@ -266,10 +268,13 @@ class NotificationVC: UIViewController {
         let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: true)
         let request = UNNotificationRequest(identifier: "dailyCompliment", content: content, trigger: trigger)
         
-        UNUserNotificationCenter.current().add(request) { error in
+        UNUserNotificationCenter.current().add(request) { [weak self] error in
             if let error = error {
                 print("❌ Error scheduling: \(error)")
             } else {
+                DispatchQueue.main.async {
+                    self?.view.showToast(message: "Scheduled", duration: 2)
+                }
                 print("✅ Daily compliment scheduled")
             }
         }
@@ -313,7 +318,7 @@ class NotificationVC: UIViewController {
         previewContainerView.snp.makeConstraints { (make) in
             make.top.equalTo(timeContainerView.snp.bottom).offset(20)
             make.leading.trailing.equalToSuperview().inset(20)
-            make.height.equalTo(200)
+            make.height.lessThanOrEqualTo(250)
         }
         
         enableNotificationBtn.snp.makeConstraints { (make) in

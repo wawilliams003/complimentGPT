@@ -12,14 +12,14 @@ extension UIView {
     func showToast(message: String, duration: TimeInterval = 2.0) {
         let toastLabel = UILabel()
         toastLabel.text = message
-        toastLabel.font = .systemFont(ofSize: 17, weight: .medium)
+        toastLabel.font = .systemFont(ofSize: 17, weight: .semibold)
         toastLabel.textAlignment = .center
         toastLabel.textColor = .systemYellow
         toastLabel.backgroundColor = UIColor.black.withAlphaComponent(0.75)
         toastLabel.layer.cornerRadius = 12
         toastLabel.clipsToBounds = true
-        toastLabel.layer.borderColor = UIColor.white.withAlphaComponent(0.5).cgColor
-        toastLabel.layer.borderWidth = 1.0
+        //toastLabel.layer.borderColor = UIColor.white.withAlphaComponent(0.5).cgColor
+        //toastLabel.layer.borderWidth = 1.0
         
         self.addSubview(toastLabel)
         let height: CGFloat = 45
@@ -27,7 +27,7 @@ extension UIView {
             make.bottom.equalToSuperview().offset(-100)
             make.centerX.equalToSuperview()
             make.height.equalTo(height)
-            make.width.equalTo(100)
+            make.width.equalTo(150)
         }
         
         toastLabel.alpha = 0
